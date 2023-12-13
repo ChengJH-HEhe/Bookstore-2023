@@ -1,8 +1,8 @@
+
 #ifndef BPT_MEMORYRIVER_HPP
 #define BPT_MEMORYRIVER_HPP
-
 #include <fstream>
-
+#include <ratio>
 using std::fstream;
 using std::ifstream;
 using std::ofstream;
@@ -15,6 +15,19 @@ file.read(reinterpret_cast<char *>(&t), sizeof(T));
 
 //将指针移动到[文件头指针+offset]处
 file.seekp(offset);
+
+与一个文件名（string）绑定
+往文件中写入一个int或T类型对象
+往文件中读取一个int或T类型对象（T的大小大于int）
+
+读文件：read函数
+  obj.read(char *s, int size);
+写文件：write函数
+  obj.write(const char *s, int size);
+判读文件结束：eof函数
+  obj.eof()
+
+
 */
 
 template <class T, int info_len = 2> class MemoryRiver {
@@ -44,6 +57,10 @@ public:
     if (n > info_len)
       return;
     /* your code here */
+    file.open(file_name, std::ios::out | std::ios::in);
+    file.seekg((n - 1) * sizeof(int));
+    file.read(reinterpret_cast<char *>(&tmp), sizeof(int));
+    file.close();
   }
 
   // 将tmp写入第n个int的位置，1_base
@@ -51,21 +68,46 @@ public:
     if (n > info_len)
       return;
     /* your code here */
+    file.open(file_name, std::ios::out | std::ios::in);
+    file.seekp((n - 1) * sizeof(int));
+    file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
+    file.close();
+  }
+  /*
+   在文件合适位置写入类对象t，并返回写入的位置索引index
+   位置索引意味着当输入正确的位置索引index，在以下三个函数中都能顺利的找到目标对象进行操作
+   位置索引index可以取为对象写入的起始位置
+    保证调用的index都是由write函数产生
+  */
+  int write(T &t) { /* your code here */
+    file.open(file_name, std::ios::out | std::ios::in);
+    file.seekp(0, std::ios::end);
+    int wh=file.tellp();
+    //std::cout<<wh;
+    file.seekp(wh);
+    file.write(reinterpret_cast<char *>(&t), sizeof(T));
+    file.close();
+    return wh;
+  }
+  // 用t的值更新位置索引index对应的对象，保证调用的index都是由write函数产生
+  void update(T &t, const int index) { /* your code here */
+    file.open(file_name, std::ios::out | std::ios::in);
+    file.seekp(index);
+    file.write(reinterpret_cast<char *>(&t), sizeof(T));
+    file.close();
   }
 
-  // 在文件合适位置写入类对象t，并返回写入的位置索引index
-  // 位置索引意味着当输入正确的位置索引index，在以下三个函数中都能顺利的找到目标对象进行操作
-  // 位置索引index可以取为对象写入的起始位置
-  int write(T &t) { /* your code here */ }
-
-  // 用t的值更新位置索引index对应的对象，保证调用的index都是由write函数产生
-  void update(T &t, const int index) { /* your code here */ }
-
   // 读出位置索引index对应的T对象的值并赋值给t，保证调用的index都是由write函数产生
-  void read(T &t, const int index) { /* your code here */ }
+  void read(T &t, const int index) { /* your code here */
+    file.open(file_name, std::ios::out | std::ios::in);
+    file.seekg(index);
+    file.read(reinterpret_cast<char *>(&t), sizeof(T));
+    file.close();
+  }
 
   // 删除位置索引index对应的对象(不涉及空间回收时，可忽略此函数)，保证调用的index都是由write函数产生
-  void Delete(int index) { /* your code here */ }
+  void Delete(int index) { /* your code here */
+  }
 };
-
-#endif // BPT_MEMORYRIVER_HPP
+ // BPT_MEMORYRIVER_HPP
+#endif
