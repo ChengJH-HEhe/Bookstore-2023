@@ -1,5 +1,3 @@
-#ifndef MEMORY_RIVER
-#define MEMORY_RIVER
 #include<fstream>
 #include<cstring>
 
@@ -76,4 +74,3 @@ public:
     file.close();
   }
 };
-#endif

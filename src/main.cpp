@@ -11,10 +11,8 @@ char s[100000];
 // 实现 读入指令
 int main() {
   std::string s;
-  int pri = Accounts_system::current_pri();
   Accounts_system::Init();
-  Books_system::Init();
-  Log_system::Init();
+  int pri = Accounts_system::get_pri();
   while (getline(cin, s)) {
     // getpri
     std::istringstream stream(s);

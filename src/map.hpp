@@ -41,18 +41,16 @@ struct __node {
 };
 struct Map {
   string nameForBlock, nameForMap;
-  MemoryRiver<__block, 2> Block;
+  MemoryRiver<__block> Block;
   MemoryRiver<__node> map;
-  int infolen[2];
+  
   __block block;
   __node node;
-  Map();
+
+  Map() = default;
   void init(string s1, string s2);
   void read();
-  info getinfo(const char *, ll); 
-  int first() {
-    return infolen[0];
-  }
+  info getinfo(const char *, ll);
   pair<int, int> getpos(info a);
   void find(const char *a);
 #define st first

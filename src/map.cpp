@@ -35,7 +35,6 @@ bool info::operator==(const info &b) const {
 }
 
 /*----------------Map Function------------------*/
-Map::Map() {}
 
 void Map::init(string s1, string s2) {
   if (Block.good()) {

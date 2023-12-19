@@ -1,60 +1,83 @@
 #ifndef ACCOUNTS_H
 #define ACCOUNTS_H
 
+#include "Invalid.h"
+#include "map.hpp"
 #include <cctype>
 #include <sstream>
-#include "map.hpp"
-#include"Invalid.h"
+#include <vector>
 using std::string;
 namespace Accounts_system {
 
 /*stack 设计
   当前用户与 op select int的匹配
 */
+namespace Accounts {
 
-
-
-
-struct Accounts {
+struct Account {
   char UserID[31] = "", Password[31] = "", Username[31] = "";
-  int Pri=-1, sta = 0;
-  
-  Accounts(char* a = nullptr, char* b = nullptr, char* c = nullptr) {
-    strcpy(UserID , a);
+  int Pri = -1, sta = 0;
+
+  Account(char *a = nullptr, char *b = nullptr, char *c = nullptr) {
+    strcpy(UserID, a);
     strcpy(Password, b);
     strcpy(Username, c);
   }
 }; // Add a semicolon here
 
-void Init();
-int current_pri();
+inline bool pd_loose(string s) {
+  if (s.size() > 30)
+    return false;
+  for (int i = 0; i < s.size(); ++i)
+    if (std::iscntrl(s[i]))
+      return false;
+  return true;
+}
+
+inline bool pd(string s) {
+  if (s.size() > 30)
+    return false;
+  for (int i = 0; i < s.size(); ++i)
+    if (!isdigit(s[i]) && !isalpha(s[i]) && s[i] != '_')
+      return false;
+  return true;
+}
+
+int Find_id(const char *s);
+Account Find_accounts(int id);
+void modify_account(int id, Account now);
+void registerUser(Account, int pri = 1);
+void passwd(Account, int, char *newPass);
+void deleteUser(char *a, int id);
+void accountsInit();
 void logout();
+} // namespace Accounts
 
-void registerUser(Accounts, int pri = 1);
-void passwd(Accounts, int, char *newPass);
-void deleteUser(char* a, int id);
+namespace wait {
 
-int Find_id(const char* s);
-Accounts Find_accounts(int id);
-void modify_account(int id, Accounts now);
+void init();
+void update();
+int getid();
+void getback(int id);
 
-inline bool pd_loose( string s) {
-  if(s.size() > 30) return false;
-  for(int i = 0; i < s.size(); ++i)
-    if(std::iscntrl(s[i]))
-      return false;
-  return true;
-}
+}; // namespace wait
 
-inline bool pd( string s) {
-  if(s.size()>30) return false;
-  for(int i = 0; i < s.size(); ++i)
-    if(!isdigit(s[i]) && !isalpha(s[i]) && s[i]!='_')
-      return false;
-  return true;
-}
+namespace stack {
+struct mystack {
+  int book = 0, id = 0, pri = -1;
+  mystack(int b = 0, int d = 0, int p = 0) {
+    book = b, id = d;
+    pri = p;
+  }
+  
+};
+} // namespace stack
 
-  void read(std::istringstream&, char, int);
+int get_pri();
+
+void read(std::istringstream &, char, int);
+void Init();
+
 } // namespace Accounts_system
 /*
   summary
