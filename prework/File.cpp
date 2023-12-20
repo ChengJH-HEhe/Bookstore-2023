@@ -78,7 +78,6 @@ struct __block {
   int id = 0, head = 0;
   int getid() { return pool[0]? pool[pool[0]--]:++id; }
   void getback(int nw) {pool[++pool[0]] = nw;}
-public:
   // remove id1 (tp = 1) or id1.nxt (tp = 0)
   void remove(int id1, bool tp = 0) {
     //std::cout<<_<<" "<<id1<<" "<<tp<<std::endl;
@@ -167,6 +166,7 @@ void Map::find(const char *a) {
     blockl = block.message[blockl].nxt;
   }while(blockl && strcmp(block.message[blockl].first.str,a)<0);
   blockl = blockr;
+  
   bool pd = 0;
   map.read(node,block.message[blockl].pos);
   for(int i = 0;i < node.size; ++i)
@@ -175,15 +175,12 @@ void Map::find(const char *a) {
       pd = 1;
     }
   blockr = block.message[blockr].nxt;
-  while(blockr && strcmp(block.message[blockr].first.str,a)==0){
-    map.read(node, block.message[blockr].pos);
-    for(int i = 0;i < node.size; ++i)
-      if(!strcmp(node.x[i].str,a)) {
-        cout<<node.x[i].val<<" ";
-        pd = 1;
-      }
-    blockr = block.message[blockr].nxt;
-  }
+  map.read(node, block.message[blockr].pos);
+  for(int i = 0;i < node.size; ++i)
+    if(!strcmp(node.x[i].str,a)) {
+      cout<<node.x[i].val<<" ";
+      pd = 1;
+    }
   cout<<(pd?"\n":"null\n");
 }
 #define st first

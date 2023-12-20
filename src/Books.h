@@ -4,9 +4,13 @@
 #include<sstream>
 #include"map.hpp"
 namespace Books_system {
-  
-  void read(const std::istringstream&, char c1 = '\0') ;
-  void Init();
+void Init();
+
+
+
+void read(const std::istringstream&, char c1 = '\0', int pri = 0) ; 
+void show(string s);
+
 
 }
 #endif

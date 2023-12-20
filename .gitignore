@@ -1,1 +1,10 @@
 requirements.md
+
+*.txt
+*.idx
+
+/src/advanced
+/src/basic
+/src/complex
+/src/robust
+/build

@@ -31,15 +31,17 @@ int main() {
       stream >> s1;
       Log_system::read(stream, s1[0]);
     } else if (s1 == "show") {
-      stream >> s1;
-      if (s1 == "finance") {
+      if(!(stream>>s1)) Books_system::show(s1);
+      else if (s1 == "finance") {
         if (pri != 7) {
           invalid();
           continue;
         }
         Log_system::read(stream, 's');
-      } else
-        Books_system::read(stream, 'S');
+      } else {
+
+        Books_system::show(s1);;
+      }
     } else {
       invalid();
     }
