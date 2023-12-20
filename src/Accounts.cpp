@@ -1,12 +1,10 @@
-#include "Accounts.h"
-#include "Invalid.h"
+#include "accounts.h"
 #include <cstdio>
 #include <vector>
 #include <fstream> // Include the missing header file
 using std::vector;
 
 namespace Accounts_system {
-Map acMap;
 
 int idcount = 0;
 int stacksize = 1;
@@ -15,6 +13,7 @@ namespace wait {
   std::fstream w; // Fix the code by including the missing header file
   std::vector<int> wait;
   void init(){
+
     w.open("wait");
     if(w.good()){
       int tmp_size;
@@ -82,9 +81,34 @@ void end() {
 
 }
 namespace Accounts {
-  
+
+Map acMap;
+fstream account;
+
+void accountsInit() {
+  // create admin
+  acMap.init("BlockAC", "NodeAC");
+  string def[2] = {"root", "sjtu"};
+  Accounts::registerUser(
+    Accounts::Account(const_cast<char*>(def[0].c_str()),const_cast<char*>(def[1].c_str())), 7);
+}
 int Find_id(char *s) {
   // User ID
+  int id = acMap.find(s);
+  if(~id) {
+    return id;
+  }
+  else {
+    return wait::getid();
+  }
+}
+Account Find_accounts(int id){
+  Account nw;
+  account.open("account");
+  account.seekg((id-1)*sizeof(Account));
+  account.read(reinterpret_cast<char*>(&nw), sizeof(Account));
+  account.close();
+  return nw;
 }
 void logout() {
   if (!stacksize)
@@ -95,20 +119,29 @@ void logout() {
     stack::vector_st.pop_back();
   }
 }
-Account Find_accounts(int id);
-void modify_account(int id, Account now);
+
+void modify_account(int id, Account now) {
+  Account nw;
+  account.open("account");
+  if(!account.good()) {
+    account.open("account",std::ios::out);
+  }
+  account.seekg((id-1)*sizeof(Account));
+  account.write(reinterpret_cast<char*>(&nw), sizeof(Account));
+}
 
 void registerUser(Account a, int pri) {
   a.Pri = pri;
+  int id = wait::getid();
+  acMap.ins(a.UserID, id);
+  modify_account(id, a);
 }
-void passwd(Account, int, char *newPass) {}
-void deleteUser(char *a, int id) {}
-void accountsInit() {
-  // create admin
-  string def[2] = {"root", "sjtu"};
-  Accounts::registerUser(
-    Accounts::Account(const_cast<char*>(def[0].c_str()),const_cast<char*>(def[1].c_str())), 7);
+
+void deleteUser(char *a, int id) {
+  wait::getback(id);
+  acMap.remove(acMap.getinfo(a, id));
 }
+
 }
 
 int get_pri() {

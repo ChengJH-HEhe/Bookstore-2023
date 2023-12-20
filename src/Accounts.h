@@ -1,7 +1,7 @@
 #ifndef ACCOUNTS_H
 #define ACCOUNTS_H
 
-#include "Invalid.h"
+#include "invalid.h"
 #include "map.hpp"
 #include <cctype>
 #include <sstream>
@@ -47,7 +47,6 @@ int Find_id(const char *s);
 Account Find_accounts(int id);
 void modify_account(int id, Account now);
 void registerUser(Account, int pri = 1);
-void passwd(Account, int, char *newPass);
 void deleteUser(char *a, int id);
 void accountsInit();
 void logout();

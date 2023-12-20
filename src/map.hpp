@@ -52,7 +52,7 @@ struct Map {
   void read();
   info getinfo(const char *, ll);
   pair<int, int> getpos(info a);
-  void find(const char *a);
+  int find(const char *a);
 #define st first
 #define nd second
   void insert(pair<int, int> pos, info a);
@@ -60,10 +60,9 @@ struct Map {
   void printall() ;
 #undef st
 #undef nd
-
 /*---------More User Friendly---------*/
-
-
+  
+void ins(char*,int);
 
 };
 

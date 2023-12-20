@@ -37,9 +37,9 @@ bool info::operator==(const info &b) const {
 /*----------------Map Function------------------*/
 
 void Map::init(string s1, string s2) {
-  if (Block.good()) {
-    return;
-  } else {
+  Block.file.open(s1.c_str());
+  map.file.open(s2.c_str());
+  if (!Block.good()) {
     Block.initialise(s1);
     map.initialise(s2);
     string u = "";
@@ -47,14 +47,11 @@ void Map::init(string s1, string s2) {
     block.message[block.head].first = info(0);
     strcpy(block.message[block.head].first.str, u.c_str());
     block.message[block.head].pos = map.write(node);
-    Block.write(block);
+  } else {
+    Block.read(block,0);
   }
-}
-
-void Map::read() {
-  Block.read(infolen[0], 0);
-  Block.read(infolen[1], sizeof(int));
-  Block.read(block, 2 * sizeof(int));
+  Block.file.close();
+  map.file.close();
 }
 info Map::getinfo(const char *str, ll value) {
   info temp;
@@ -79,7 +76,7 @@ pair<int, int> Map::getpos(info a) {
   }
   return std::make_pair(id1, node.size);
 }
-void Map::find(const char *a) {
+int Map::find(const char *a) {
   // find a pos;
   int blockl = block.head, blockr = block.head;
   do {
@@ -87,9 +84,15 @@ void Map::find(const char *a) {
     blockl = block.message[blockl].nxt;
   } while (blockl && strcmp(block.message[blockl].first.str, a) < 0);
   blockl = blockr;
-
-  bool pd = 0;
-  map.read(node, block.message[blockl].pos);
+  map.read(node,block.message[blockl].pos);
+  for(int i = 0;i < node.size; ++i)
+    if(!strcmp(node.x[i].str,a)) {
+      return node.x[i].val;
+    }
+  blockr = block.message[blockr].nxt;
+  if(blockr && strcmp(block.message[blockr].first.str,a)==0)
+    return block.message[blockr].first.val;
+  return -1;
 }
 #define st first
 #define nd second
@@ -188,3 +191,8 @@ void Map::printall() {
 }
 #undef st
 #undef nd
+
+void Map::ins(char* tp, int id) {
+  info tmp;
+  insert(getpos(tmp = getinfo(tp,id)), tmp);
+}
