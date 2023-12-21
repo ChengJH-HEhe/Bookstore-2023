@@ -48,7 +48,7 @@ void Map::init(string s1, string s2) {
     strcpy(block.message[block.head].first.str, u.c_str());
     block.message[block.head].pos = map.write(node);
   } else {
-    Block.read(block,0);
+    Block.read(block, 0);
   }
   Block.file.close();
   map.file.close();
@@ -84,16 +84,54 @@ int Map::find(const char *a) {
     blockl = block.message[blockl].nxt;
   } while (blockl && strcmp(block.message[blockl].first.str, a) < 0);
   blockl = blockr;
-  map.read(node,block.message[blockl].pos);
-  for(int i = 0;i < node.size; ++i)
-    if(!strcmp(node.x[i].str,a)) {
+  map.read(node, block.message[blockl].pos);
+  for (int i = 0; i < node.size; ++i)
+    if (!strcmp(node.x[i].str, a)) {
       return node.x[i].val;
     }
   blockr = block.message[blockr].nxt;
-  if(blockr && strcmp(block.message[blockr].first.str,a)==0)
+  if (blockr && strcmp(block.message[blockr].first.str, a) == 0)
     return block.message[blockr].first.val;
   return -1;
 }
+std::vector<int> Map::multifind(const char *a) {
+  std::vector<int> v;
+
+  if(a == nullptr) {
+    int nw = block.message[block.head].nxt;
+    while(nw){
+      map.read(node, block.message[nw].pos);
+      for (int i = 0; i < node.size; ++i)
+        v.push_back(node.x[i].val);
+      nw = block.message[nw].nxt;
+    }
+    return v;
+  }
+  
+  int blockl = block.head, blockr = block.head;
+  do {
+    blockr = blockl;
+    blockl = block.message[blockl].nxt;
+  } while (blockl && strcmp(block.message[blockl].first.str, a) < 0);
+  blockl = blockr;
+  bool pd = 0;
+  map.read(node, block.message[blockl].pos);
+  for (int i = 0; i < node.size; ++i)
+    if (!strcmp(node.x[i].str, a)) {
+      v.push_back(node.x[i].val);
+    }
+  blockr = block.message[blockr].nxt;
+  while (blockr && strcmp(block.message[blockr].first.str, a) == 0) {
+    map.read(node, block.message[blockr].pos);
+    for (int i = 0; i < node.size; ++i)
+      if (!strcmp(node.x[i].str, a)) {
+        v.push_back(node.x[i].val);
+      }
+    blockr = block.message[blockr].nxt;
+  }
+  return v;
+}
+
 #define st first
 #define nd second
 void Map::insert(pair<int, int> pos, info a) {
@@ -192,7 +230,7 @@ void Map::printall() {
 #undef st
 #undef nd
 
-void Map::ins(char* tp, int id) {
+void Map::ins(char *tp, int id) {
   info tmp;
-  insert(getpos(tmp = getinfo(tp,id)), tmp);
+  insert(getpos(tmp = getinfo(tp, id)), tmp);
 }

@@ -1,10 +1,11 @@
 #ifndef map_hpp
 #define map_hpp
 
-#include<fstream>
-#include<cstring>
-#include<iostream>
-#include"memoryRiver.hpp"
+#include <fstream>
+#include <cstring>
+#include <iostream>
+#include "memoryRiver.hpp"
+#include <vector>
 using std::fstream;
 using std::pair;
 using std::string;
@@ -41,7 +42,7 @@ struct __node {
 };
 struct Map {
   string nameForBlock, nameForMap;
-  MemoryRiver<__block> Block;
+  MemoryRiver<__block, 1> Block;
   MemoryRiver<__node> map;
   
   __block block;
@@ -53,6 +54,9 @@ struct Map {
   info getinfo(const char *, ll);
   pair<int, int> getpos(info a);
   int find(const char *a);
+  std::vector<int> multifind(const char *);
+
+  
 #define st first
 #define nd second
   void insert(pair<int, int> pos, info a);

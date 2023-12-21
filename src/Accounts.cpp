@@ -1,4 +1,5 @@
 #include "accounts.h"
+#include "dynamic.h"
 #include <cstdio>
 #include <vector>
 #include <fstream> // Include the missing header file
@@ -8,55 +9,20 @@ namespace Accounts_system {
 
 int idcount = 0;
 int stacksize = 1;
-namespace wait {
-  
-  std::fstream w; // Fix the code by including the missing header file
-  std::vector<int> wait;
-  void init(){
 
-    w.open("wait");
-    if(w.good()){
-      int tmp_size;
-      w.read(reinterpret_cast<char*>(&tmp_size), sizeof(int));
-      int* nw = new int[tmp_size];
-      w.read(reinterpret_cast<char*>(nw), sizeof(nw));
-      for(int i = 0; i < tmp_size; ++i)
-        wait.push_back(nw[i]);
-      delete []nw;
-    } else {
-      w.open("wait", std::ios::out);
-    }
-    w.close();
-  }
-  void update() {
-    int tmpsize = wait.size();
-    int* nw = new int[tmpsize];
-    for(int i = 0; i < tmpsize; ++i)
-      nw[i] = wait[i];
-    w.open("wait");
-    w.write(reinterpret_cast<char*>(&tmpsize),sizeof(int));
-    w.write(reinterpret_cast<char*>(nw),tmpsize*sizeof(int));
-    delete[] nw;
-    w.close();
-  }
-  int getid() { return wait.size() ? wait.pop_back(), wait.back() : ++idcount; }
-  void getback(int id) { wait.push_back(id); }
-}
+/* stack */
 namespace stack {
-std::vector<mystack> vector_st;
+  std::vector<mystack> vector_st;
   fstream stack;
-
 void Init() {
   // 登录栈大小， new一个数组转成vector
   // Blocksize 读取
   if (!stack.good()) {
     stack.open("stack", std::ios::out);
     Accounts::accountsInit();
-    vector_st.push_back(mystack(0,1));
     stack.close();
   } else {
     stack.open("stack");
-    stack.seekg(0);
     stack.read(reinterpret_cast<char *>(&stacksize), sizeof(int));
     mystack* st = new mystack[stacksize];
     stack.seekg(sizeof(int));
@@ -78,13 +44,21 @@ void end() {
   delete []st;
   stack.close();
 }
-
+void select(int bookid) {
+  if(vector_st.empty())
+    return invalid();
+  vector_st.back().book = bookid;
+}
+mystack back() {
+  if(vector_st.empty()) return mystack();
+  return vector_st.back();
+}
 }
 namespace Accounts {
 
 Map acMap;
 fstream account;
-
+Dynamic queue("accounts");
 void accountsInit() {
   // create admin
   acMap.init("BlockAC", "NodeAC");
@@ -92,15 +66,13 @@ void accountsInit() {
   Accounts::registerUser(
     Accounts::Account(const_cast<char*>(def[0].c_str()),const_cast<char*>(def[1].c_str())), 7);
 }
-int Find_id(char *s) {
+int Find_id(const char *s) {
   // User ID
   int id = acMap.find(s);
   if(~id) {
     return id;
   }
-  else {
-    return wait::getid();
-  }
+  return -1;
 }
 Account Find_accounts(int id){
   Account nw;
@@ -121,30 +93,31 @@ void logout() {
 }
 
 void modify_account(int id, Account now) {
-  Account nw;
   account.open("account");
   if(!account.good()) {
     account.open("account",std::ios::out);
   }
   account.seekg((id-1)*sizeof(Account));
-  account.write(reinterpret_cast<char*>(&nw), sizeof(Account));
+  account.write(reinterpret_cast<char*>(&now), sizeof(Account));
+  account.close();
 }
 
 void registerUser(Account a, int pri) {
   a.Pri = pri;
-  int id = wait::getid();
+  int id = queue.getid();
   acMap.ins(a.UserID, id);
   modify_account(id, a);
 }
 
 void deleteUser(char *a, int id) {
-  wait::getback(id);
+  queue.getback(id);
   acMap.remove(acMap.getinfo(a, id));
 }
 
 }
 
 int get_pri() {
+  if(stack::vector_st.empty()) return -1;
   return stack::vector_st.back().pri;
 }
 
@@ -169,6 +142,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   case 's': {
     // 保证@是合法 控制符
     int id = Find_id(s[0].c_str());
+    if(id == -1) return invalid();
     Account candidate = Find_accounts(id);
     if (!pd(s[0]) || (sz == 2 && !pd(s[1])))
       return invalid();
@@ -201,6 +175,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
       if (!pd(s[i]))
         return invalid();
     int id = Find_id(s[0].c_str());
+    if(id == -1) return invalid();
     Account now = Find_accounts(id);
     if (now.Pri == -1 || (sz == 3 && strcmp(now.Password, s[2].c_str())) ||
         (sz == 2 && su_pri != 7))
@@ -223,11 +198,16 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   case 'd': {
     if (su_pri != 7 || !pd(s[0]))
       return invalid();
-    deleteUser(const_cast<char *>(s[0].c_str()), Find_id(s[0].c_str()));
+    int id = Find_id(s[0].c_str());
+    if(id == -1) return invalid();
+    deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {
     logout();
   } break;
+  default: {
+    stack::select(0);
+  }
   }
 }
 

@@ -25,23 +25,7 @@ struct Account {
   }
 }; // Add a semicolon here
 
-inline bool pd_loose(string s) {
-  if (s.size() > 30)
-    return false;
-  for (int i = 0; i < s.size(); ++i)
-    if (std::iscntrl(s[i]))
-      return false;
-  return true;
-}
 
-inline bool pd(string s) {
-  if (s.size() > 30)
-    return false;
-  for (int i = 0; i < s.size(); ++i)
-    if (!isdigit(s[i]) && !isalpha(s[i]) && s[i] != '_')
-      return false;
-  return true;
-}
 
 int Find_id(const char *s);
 Account Find_accounts(int id);
@@ -52,15 +36,6 @@ void accountsInit();
 void logout();
 } // namespace Accounts
 
-namespace wait {
-
-void init();
-void update();
-int getid();
-void getback(int id);
-
-}; // namespace wait
-
 namespace stack {
 struct mystack {
   int book = 0, id = 0, pri = -1;
@@ -70,12 +45,14 @@ struct mystack {
   }
   
 };
+void Init();
+void select(int bookid);
+mystack back() ;
 } // namespace stack
 
 int get_pri();
 
 void read(std::istringstream &, char, int);
-void Init();
 
 } // namespace Accounts_system
 /*
