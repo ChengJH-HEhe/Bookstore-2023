@@ -2,9 +2,23 @@ requirements.md
 
 *.txt
 *.idx
-
 /src/advanced
 /src/basic
 /src/complex
 /src/robust
 /build
+src/testdir/2.out
+src/testdir/account
+src/testdir/authorMapAC
+src/testdir/authorMapNodeAC
+src/testdir/BlockAC
+src/testdir/Book
+src/testdir/bookAC
+src/testdir/bookNodeAC
+src/testdir/code
+src/testdir/keywordAC
+src/testdir/keywordNodeAC
+src/testdir/nameMapAC
+src/testdir/nameMapNodeAC
+src/testdir/NodeAC
+src/testdir/stack
