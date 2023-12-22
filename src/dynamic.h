@@ -36,7 +36,7 @@ class Dynamic {
   }
   int idcount = 0;
   void init();
-  void update();
+  void end();
   int getid();
   void getback(int);
 }; // namespace wait

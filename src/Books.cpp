@@ -3,10 +3,13 @@
 #include "accounts.h"
 #include "invalid.h"
 #include "map.hpp"
+#include <cassert>
 #include <climits>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+#include <unordered_map>
 #include <vector>
 namespace Books_system {
 
@@ -18,16 +21,24 @@ void Init() {
     book
     book_wait
   */
+  Book.open("Book");
+  if(!Book.good()) Book.open("Book",std::ios::out);
+  Book.close();
   bookMap.init("bookAC", "bookNodeAC");
   keywordMap.init("keywordAC", "keywordNodeAC");
   nameMap.init("nameMapAC", "nameMapNodeAC");
   authorMap.init("authorMapAC", "authorMapNodeAC");
-  queue.init();
+  
+}
+
+void end() {
+  queue.end();
 }
 
 namespace books {
 
 std::vector<std::string> getkey(string nw) {
+  std::unordered_map<std::string,bool> mp;
   std::vector<std::string> v;
   while(nw.find('|') != nw.npos) {
     int x = nw.find('|');
@@ -35,13 +46,19 @@ std::vector<std::string> getkey(string nw) {
       v.clear();
       return v;
     } else {
-      v.push_back(nw.substr(0, x - 1));
-      if(!pd_info(v.back(), "key")){
+      v.push_back(nw.substr(0, x));
+      if(mp.find(v.back()) != mp.end() || !pd_info(v.back(), "key")){
         v.clear();
         return v;
       }
       nw = nw.substr(x+1);
     }
+  }
+  if(nw.size() && (!pd_info(nw, "key") || mp.find(nw)!= mp.end())) {
+    v.clear();
+    return v;
+  } else {
+    v.push_back(nw);
   }
   return v;
 }
@@ -52,14 +69,14 @@ long long pd_info(string s, string tp) {
     for(auto i : s) if(iscntrl(i)) return false;
     return true;
   } else if(tp == "name" || tp == "author" || tp == "key") {
-    if(s.size()>60) return false;
+    if(s.size()>60 || s.empty()) return false;
     for(auto i : s) if(iscntrl(i)|| i == '\"')return false;
     return true;
   } else if(tp == "Quantity") {
     long long num = 0;
     for (auto i = s.begin(); i != s.end(); ++i)
         if (!isdigit(*i) || num > INT_MAX)
-          return 0;
+          return 0; 
         else
           num = num * 10 + (*i - '0');
     return num;
@@ -78,42 +95,43 @@ bool pd_book_step(int& id, book& nw, std::string s1) {
   static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"", "-price="};
   switch (s1[1]) {
   case 'I': {
-    if (s1.size() <= 6 || s1.substr(0, 5) != str[0])
+    // 第二个参数是长度
+    if (s1.size() <= 6 || s1.substr(0, 6) != str[0])
       return false;
     else {
       string s = s1.substr(6);
       if(!strcmp(nw.ISBN, s.c_str()) || !pd_info(s,"ISBN"))
         return false;
+      if(~find_id(s.c_str())) return false;
       // delete_book(id, nw);
       // strcpy(nw.ISBN, s.c_str());
       return true;
     }
   } break;
   case 'n': {
-    if (s1.size() <= 8 || s1.substr(0, 6) != str[1] || s1.back() != '\"')
+    if (s1.size() <= 8 || s1.substr(0, 7) != str[1] || s1.back() != '\"')
       return false;
     else {
-       string s = s1.substr(7, s1.size() - 1);
+       string s = s1.substr(7);s.pop_back();
        if(!pd_info(s,"name")) return false;
       // strcpy(nw.BookName , s.c_str());
       return true;
     }
   } break;
   case 'a': {
-    if (s1.size() <= 10 || s1.substr(0, 8) != str[2] || s1.back() != '\"')
+    if (s1.size() <= 10 || s1.substr(0, 9) != str[2] || s1.back() != '\"')
       return false;
     else {
-       string s = s1.substr(9, s1.size() - 1);
+       string s = s1.substr(9);s.pop_back();
       if(!pd_info(s, "author"))return false;
-      // Books_system::show('a', s);
       return true;
     }
   } break;
   case 'k': {
-    if (s1.size() <= 11 || s1.substr(0, 9) != str[3] || s1.back() != '\"')
+    if (s1.size() <= 11 || s1.substr(0, 10) != str[3] || s1.back() != '\"')
       return false;
     else {
-      string s = s1.substr(10, s1.size() - 1);
+      string s = s1.substr(10);s.pop_back();
       std::vector<std::string> key = getkey(s);
       for(auto i : key)
         if(!pd_info(i, "key")) return false;
@@ -122,10 +140,10 @@ bool pd_book_step(int& id, book& nw, std::string s1) {
     }
   } break;
   case 'p': {
-    if (s1.size() <= 7 || s1.substr(0, 5) != str[4] )
+    if (s1.size() <= 7 || s1.substr(0, 7) != str[4] )
       return false;
     else {
-      string s = s1.substr(10);
+      string s = s1.substr(7);
       if(convert(s)) return true;
       return false;
     }
@@ -135,34 +153,34 @@ bool pd_book_step(int& id, book& nw, std::string s1) {
   }
   }
 }
-void modify_book_step(int& id, book& nw, std::string s1) {
+void modify_book_step(int& id, book& nw, book& past, std::string s1) {
   static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"", "-price="};
   switch (s1[1]) {
   case 'I': {
       string s = s1.substr(6);
-      if(!strcmp(nw.ISBN, s.c_str()))
-        return invalid();
-      delete_book(nw, id, getkey(nw.Keywords));
+      delete_book(past, id, getkey(past.Keywords));
       strcpy(nw.ISBN, s.c_str());
       add_book(nw, getkey(nw.Keywords));
+      past = nw;
   } break;
   case 'n': {
-      string s = s1.substr(7, s1.size() - 1);
+      string s = s1.substr(7); s.pop_back();
       strcpy(nw.BookName , s.c_str());
   } break;
   case 'a': {
-      string s = s1.substr(9, s1.size() - 1);
-      Books_system::show('a', s);
+      string s = s1.substr(9);s.pop_back();
+      strcpy(nw.Author, s.c_str());
       // return true;
   } break;
   case 'k': {
-      string s = s1.substr(10, s1.size() - 1);
+      string s = s1.substr(10);s.pop_back();
       strcpy(nw.Keywords , s.c_str());
       //TODO
   } break;
   case 'p': {
-      string s = s1.substr(7, s1.size());
+      string s = s1.substr(7);
       double price = std::stod(s);
+      //std::cout<<s<<" "<<std::fixed<<" "<< price<<" "<<std::endl;
       nw.Price = price;
   }break;
   default: {
@@ -172,7 +190,7 @@ void modify_book_step(int& id, book& nw, std::string s1) {
 }
 std::ostream &operator<<(std::ostream &out, const book &nw) {
   out << nw.ISBN << '\t' << nw.BookName << '\t' << nw.Author << '\t'
-      << nw.Keywords << '\t' << std::setprecision(2) << nw.Price << '\t'
+      << nw.Keywords << '\t' << std::fixed << std::setprecision(2) << nw.Price << '\t'
       << nw.Quantity << '\n';
   return out;
 }
@@ -198,52 +216,53 @@ void modify_book(int id,book past, book nw) {
   if (!Book.good()) {
     Book.open("Book", std::ios::out);
   }
-  Book.seekg((id - 1) * sizeof(Book));
-  Book.write(reinterpret_cast<char *>(&nw), sizeof(Book));
+  Book.seekp((id - 1) * sizeof(book));
+  Book.write(reinterpret_cast<char *>(&nw), sizeof(book));
   Book.close();
-
   if(strcmp(past.Author, nw.Author)){
-    authorMap.remove(authorMap.getinfo(past.Author, id));
-    authorMap.ins(nw.Author, id);
+    authorMap.remove(authorMap.getinfo(strcat(past.Author,past.ISBN), id));
+    authorMap.ins(strcat(nw.Author,nw.ISBN), id);
   }
   if(strcmp(past.BookName, nw.BookName)){
-    nameMap.remove(nameMap.getinfo(past.BookName, id));
-    nameMap.ins(nw.BookName, id);
+    nameMap.remove(nameMap.getinfo(strcat(past.BookName,past.ISBN), id));
+    nameMap.ins(strcat(nw.BookName,nw.ISBN), id);
   }
 }
 
-void add_book(book a, std::vector<std::string> key) {
+int add_book(book a, std::vector<std::string> key) {
   int id = queue.getid();
   bookMap.ins(a.ISBN, id);
-  nameMap.ins(a.BookName, id);
-  authorMap.ins(a.Author, id);
-  for (auto i : key)
-    keywordMap.ins(const_cast<char *>(i.c_str()), id);
   modify_book(id, a, a);
+  if(a.BookName[0] != '\0') nameMap.ins(strcat(a.BookName, a.ISBN),id);
+  if(a.Author[0] != '\0') authorMap.ins(strcat(a.Author, a.ISBN), id);
+  for (auto i : key)
+    keywordMap.ins(std::strcat(const_cast<char *>(i.c_str()),a.ISBN), id);
+  return id;
 }
 void delete_book(book a, int id, std::vector<std::string> key) {
   queue.getback(id);
   bookMap.remove(bookMap.getinfo(a.ISBN, id));
-  nameMap.remove(nameMap.getinfo(a.BookName, id));
-  authorMap.remove(authorMap.getinfo(a.Author, id));
+  if(strcmp(a.BookName,"\0")) nameMap.remove(nameMap.getinfo(strcat(a.BookName,a.ISBN), id));
+  if(strcmp(a.Author,"\0"))authorMap.remove(authorMap.getinfo(strcat(a.Author,a.ISBN), id));
   for (auto i : key)
-    keywordMap.remove(keywordMap.getinfo(i.c_str(), id));
+    keywordMap.remove(keywordMap.getinfo(strcat(const_cast<char*>(i.c_str()), a.ISBN), id));
 }
 
 } // namespace books
 
 
-void modify_key(int id, std::vector<std::string> a, std::vector<std::string> b) {
+void modify_key(int id, std::vector<std::string> a, std::vector<std::string> b, char* ISBN) {
   for(auto ai:a) 
-    keywordMap.remove(keywordMap.getinfo(ai.c_str(), id));
+    keywordMap.remove(keywordMap.getinfo(strcat(const_cast<char*>(ai.c_str()), ISBN), id));
   for(auto ai:b) 
-    keywordMap.ins(const_cast<char*>(ai.c_str()), id);
+    keywordMap.ins(strcat(const_cast<char*>(ai.c_str()), ISBN), id);
 }
 
 void read(std::istringstream &stream, char c1, int pri) {
   string s[5] = {"@", "@", "@", "@", "@"};
   int sz = 0;
-  while (stream >> s[sz++]);
+  while (stream >> s[sz++]); 
+  --sz;
   /*
   4个 char*->int
   ISBN name author keywords
@@ -262,7 +281,7 @@ void read(std::istringstream &stream, char c1, int pri) {
       return invalid();
     } else {
       long long num = 0;
-      for (auto i = s[1].rbegin(); i != s[1].rend(); ++i)
+      for (auto i = s[1].begin(); i != s[1].end(); ++i)
         if (!isdigit(*i) || num > INT_MAX)
           return invalid();
         else
@@ -271,39 +290,42 @@ void read(std::istringstream &stream, char c1, int pri) {
       if (id == -1)
         return invalid();
       books::book nw = books::find_book(id);
-      if (nw.Quantity < num)
+      if (nw.Quantity < num || num == 0)
         return invalid();
       nw.Quantity -= num;
       modify_book(id, nw, nw);
       Log_system::add(num * nw.Price);
+      printf("%.2lf\n", num * nw.Price);
     }
   } break;
   case 's': {
+    //////////////////////////////std::cout<< pri << std::endl; 忘传pri
     if (pri < 3 || sz != 1 || !books::pd_info(s[0],"ISBN"))
       return invalid();
     int id = bookMap.find(s[0].c_str());
     if (id == -1)
-      books::add_book(books::book(s[0].c_str()), std::vector<std::string>());
-    else
-      Accounts_system::stack::select(id);
+      id = books::add_book(books::book(s[0].c_str()), std::vector<std::string>());
+    Accounts_system::stack::select(id);
   } break;
   case 'm': {
     int id = Accounts_system::stack::back().book;
+    //std::cout<<id<<" "<<std::endl;
     if(!id) return invalid();
     bool pd[200];
     memset(pd,0,sizeof(pd));
     for(int i = 0; i < sz; ++i)
-      if(s[i].size() <= 6 || pd[s[i][1]-'a'])
+      if(s[i].size() <= 6 || !isalpha(s[i][1]) || pd[s[i][1]-'A'])
         return invalid();
-      else pd[s[i][1]-'A'] = 1; 
-      
-    books::book nw = books::find_book(id), nw2 = nw;
+      else pd[s[i][1]-'A'] = 1;
+    books::book nw , nw2;
+    nw = books::find_book(id), nw2 = nw;
     for(int i = 0; i < sz; ++i)
       if(!pd_book_step(id, nw, s[i]))
         return invalid();
+    //assert(0);
     for(int i = 0; i < sz; ++i)
-      modify_book_step(id, nw, s[i]);
-    modify_key(id,books::getkey(nw2.Keywords), books::getkey(nw.Keywords));
+      modify_book_step(id, nw, nw2, s[i]);
+    modify_key(id,books::getkey(nw2.Keywords), books::getkey(nw.Keywords), nw.ISBN);
     modify_book(id, nw2, nw);
   } break;
   case 'i': {
@@ -311,16 +333,13 @@ void read(std::istringstream &stream, char c1, int pri) {
     if (sz != 2) {
       return invalid();
     } else {
-
       long long num = books::pd_info(s[0],"Quantity");
-      if(num <0 || !books::convert(s[1])) return invalid();
+      if(num < 0 || !books::convert(s[1])) return invalid();
       double TotalCost = std::stod(s[1]);
       int id = Accounts_system::stack::back().book;
       if (!id || TotalCost < 1e-6)
         return invalid();
       books::book nw = books::find_book(id);
-      if (nw.Quantity < num )
-        return invalid();
       nw.Quantity += num;
       modify_book(id, nw, nw);
       Log_system::add(-TotalCost);
@@ -328,12 +347,20 @@ void read(std::istringstream &stream, char c1, int pri) {
   } break;
   }
 }
-void show(char s, string name) {
+void show(char s, string name, int pri) {
   // h I N A K
   // 遍历map输出
+  if(pri < 1) return invalid();
   switch (s) {
   case 'h': {
     std::vector<int> st = bookMap.multifind(nullptr);
+    std::cerr<<st.size();
+    if (st.empty())
+      std::cout << '\n';
+    else {
+      for (auto i : st)
+        std::cout << books::find_book(i);
+    }
   } break;
   case 'I': {
     int id = bookMap.find(name.c_str());

@@ -12,16 +12,18 @@ namespace Accounts_system {
 /*stack 设计
   当前用户与 op select int的匹配
 */
+
+void Init();
+
 namespace Accounts {
 
 struct Account {
   char UserID[31] = "", Password[31] = "", Username[31] = "";
   int Pri = -1, sta = 0;
-
   Account(char *a = nullptr, char *b = nullptr, char *c = nullptr) {
-    strcpy(UserID, a);
-    strcpy(Password, b);
-    strcpy(Username, c);
+    if(a) strcpy(UserID, a);
+    if(b) strcpy(Password, b);
+    if(c) strcpy(Username, c);
   }
 }; // Add a semicolon here
 
@@ -49,12 +51,15 @@ void Init();
 void select(int bookid);
 mystack back() ;
 } // namespace stack
-
+void end();
 int get_pri();
 
 void read(std::istringstream &, char, int);
 
 } // namespace Accounts_system
+
+void end();
+
 /*
   summary
   1.给定的是char*，如何找到对应数据？

@@ -14,7 +14,7 @@ typedef long long ll;
 const int mxn = 456;
 
 struct info {
-  char str[66];
+  char str[128];
   ll val = 0;
   info(ll va = 0) { val = va; }
   bool operator<(const info &b) const;
@@ -42,8 +42,8 @@ struct __node {
 };
 struct Map {
   string nameForBlock, nameForMap;
-  MemoryRiver<__block, 1> Block;
-  MemoryRiver<__node> map;
+  MemoryRiver<__block, 0> Block;
+  MemoryRiver<__node, 0> map;
   
   __block block;
   __node node;

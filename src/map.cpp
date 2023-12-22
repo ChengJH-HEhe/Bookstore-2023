@@ -38,8 +38,7 @@ bool info::operator==(const info &b) const {
 
 void Map::init(string s1, string s2) {
   Block.file.open(s1.c_str());
-  map.file.open(s2.c_str());
-  if (!Block.good()) {
+  if (!Block.file.good()) {
     Block.initialise(s1);
     map.initialise(s2);
     string u = "";
@@ -51,7 +50,6 @@ void Map::init(string s1, string s2) {
     Block.read(block, 0);
   }
   Block.file.close();
-  map.file.close();
 }
 info Map::getinfo(const char *str, ll value) {
   info temp;
@@ -78,6 +76,7 @@ pair<int, int> Map::getpos(info a) {
 }
 int Map::find(const char *a) {
   // find a pos;
+  std::cout<<block.head<<" ";
   int blockl = block.head, blockr = block.head;
   do {
     blockr = blockl;
@@ -94,15 +93,23 @@ int Map::find(const char *a) {
     return block.message[blockr].first.val;
   return -1;
 }
+
+int cmp(char* a, const char* b){
+  for(int i = 0; b[i]!='\0' && a[i] != '\0'; ++i)
+    if(a[i]<b[i])return -1;
+    else if(b[i]<a[i])return 1;
+  if(strlen(a) > strlen(b)) return 0;
+  else return -1;
+}
+
 std::vector<int> Map::multifind(const char *a) {
   std::vector<int> v;
-
   if(a == nullptr) {
-    int nw = block.message[block.head].nxt;
+    int nw = block.head;
     while(nw){
       map.read(node, block.message[nw].pos);
       for (int i = 0; i < node.size; ++i)
-        v.push_back(node.x[i].val);
+        if(node.x[i].val)v.push_back(node.x[i].val);
       nw = block.message[nw].nxt;
     }
     return v;
@@ -112,19 +119,19 @@ std::vector<int> Map::multifind(const char *a) {
   do {
     blockr = blockl;
     blockl = block.message[blockl].nxt;
-  } while (blockl && strcmp(block.message[blockl].first.str, a) < 0);
+  } while (blockl && cmp(block.message[blockl].first.str, a) < 0);
   blockl = blockr;
   bool pd = 0;
   map.read(node, block.message[blockl].pos);
   for (int i = 0; i < node.size; ++i)
-    if (!strcmp(node.x[i].str, a)) {
+    if (!cmp(node.x[i].str, a)) {
       v.push_back(node.x[i].val);
     }
   blockr = block.message[blockr].nxt;
-  while (blockr && strcmp(block.message[blockr].first.str, a) == 0) {
+  while (blockr && cmp(block.message[blockr].first.str, a) == 0) {
     map.read(node, block.message[blockr].pos);
     for (int i = 0; i < node.size; ++i)
-      if (!strcmp(node.x[i].str, a)) {
+      if (!cmp(node.x[i].str, a)) {
         v.push_back(node.x[i].val);
       }
     blockr = block.message[blockr].nxt;
