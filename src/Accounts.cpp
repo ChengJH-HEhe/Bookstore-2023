@@ -9,7 +9,6 @@ using std::vector;
 namespace Accounts_system {
 
 int idcount = 0;
-int stacksize = 1;
 
 /* stack */
 namespace stack {
@@ -22,8 +21,10 @@ void Init() {
   if (!stack.good()) {
     stack.open("stack", std::ios::out);
     stack.close();
+    // 依赖 acMap
     Accounts::accountsInit();
   } else {
+    int stacksize;
     stack.read(reinterpret_cast<char *>(&stacksize), sizeof(int));
     mystack* st = new mystack[stacksize];
     stack.read(reinterpret_cast<char *>(st), stacksize * sizeof(mystack));
@@ -36,8 +37,10 @@ void Init() {
 
 void end() {
   stack.open("stack");
+  int stacksize = vector_st.size();
   stack.write(reinterpret_cast<char *>(&stacksize), sizeof(int));
   mystack* st = new mystack[stacksize];
+  //std::cerr<<st<<std::endl;
   for(int i = 0; i < stacksize; ++i)
     st[i] = vector_st[i];
   stack.write(reinterpret_cast<char *>(st), stacksize * sizeof(mystack));
@@ -101,6 +104,7 @@ void modify_account(int id, Account now) {
   account.open("account");
   account.seekp((id-1)*sizeof(Account));
   account.write(reinterpret_cast<char*>(&now), sizeof(Account));
+  std::cerr<<now.Password<<" "<<now.UserID<<" "<<now.Username<<"数字？"<<std::endl;
   account.close();
 }
 
@@ -138,9 +142,10 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     int id = Find_id(s[0].c_str());
     if(id == -1) return invalid();
     Account candidate = Find_accounts(id);
+    //std::cout << "candidaate" << candidate.Password <<std::endl;
     if (!pd(s[0]) || (sz == 2 && !pd(s[1])))
       return invalid();
-    std::cout<<1;
+    //std::cout<<1;
     if (sz == 1) {
       if (su_pri <= candidate.Pri)
         return invalid();
@@ -148,11 +153,11 @@ void read(std::istringstream &stream, char tp, int su_pri) {
         candidate.sta++;
     } else {
       if (strcmp(candidate.Password, s[1].c_str()))
-        return invalid();
+        return std::cerr<<candidate.Password << " " <<s[1].c_str(), invalid();
       else
         candidate.sta++;
     }
-    std::cout<<1;
+    //std::cout<<1;
     stack::vector_st.push_back(stack::mystack(0,id,candidate.Pri));
     modify_account(id, candidate);
   } break;
@@ -193,7 +198,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
       return invalid();
     registerUser(Account(const_cast<char *>(s[0].c_str()),
                           const_cast<char *>(s[1].c_str()),
-                          const_cast<char *>(s[2].c_str())),
+                          const_cast<char *>(s[3].c_str())),
                  s[2][0] - '0');
   } break;
   case 'd': {
@@ -215,7 +220,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
 void Init() {
   Accounts::account.open("account");
   if(!Accounts::account.good())
-    Accounts::account.open("account",std::ios::out);
+    Accounts::account.open("account",std::ios::out);//std::cerr<<"out\n";
   Accounts::account.close();
   Accounts::acMap.init("BlockAC", "NodeAC");
   Accounts::queue.init();
