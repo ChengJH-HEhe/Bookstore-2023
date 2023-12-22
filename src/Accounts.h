@@ -22,7 +22,7 @@ struct Account {
   int Pri = -1, sta = 0, bookid = 0;
   Account(char *a = nullptr, char *b = nullptr, char *c = nullptr) {
     if(a) strcpy(UserID, a);
-    if(b) strcpy(Password, b), std::cerr<< b << std::endl;
+    if(b) strcpy(Password, b);// std::cerr<< b << std::endl;
     if(c) strcpy(Username, c);
   }
 }; // Add a semicolon here

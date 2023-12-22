@@ -105,7 +105,7 @@ void modify_account(int id, Account now) {
   assert(account.good());
   account.seekp((id-1)*sizeof(Account));
   account.write(reinterpret_cast<char*>(&now), sizeof(Account));
-  std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<"数字？"<<std::endl;
+  //std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<"数字？"<<std::endl;
   account.close();
 }
 
@@ -154,7 +154,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
         candidate.sta++;
     } else {
       if (strcmp(candidate.Password, s[1].c_str()))
-        return std::cerr<<candidate.Password << " " <<s[1].c_str(), invalid();
+        return  invalid();// std::cerr<<candidate.Password << " " <<s[1].c_str(), invalid();
       else
         candidate.sta++;
     }

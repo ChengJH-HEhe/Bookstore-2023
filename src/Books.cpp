@@ -91,6 +91,13 @@ bool convert(const std::string &s) {
   }
 }
 
+void modify_key(int id, string past, string nw, char* ISBN) {
+  std::vector<std::string> a = getkey(past), b = getkey(nw);
+  for(auto ai:a) 
+    keywordMap.remove(keywordMap.getinfo(strcat(const_cast<char*>(ai.c_str()), ISBN), id));
+  for(auto ai:b) 
+    keywordMap.ins(strcat(const_cast<char*>(ai.c_str()), ISBN), id);
+}
 bool pd_book_step(int& id, book& nw, std::string s1) {
   static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"", "-price="};
   switch (s1[1]) {
@@ -174,6 +181,7 @@ void modify_book_step(int& id, book& nw, book& past, std::string s1) {
   } break;
   case 'k': {
       string s = s1.substr(10);s.pop_back();
+      modify_key(id,nw.Keywords, s, nw.ISBN);
       strcpy(nw.Keywords , s.c_str());
       //TODO
   } break;
@@ -211,6 +219,8 @@ book find_book(int id) {
   Book.close();
   return nw;
 }
+
+
 void modify_book(int id,book past, book nw) {
   Book.open("Book");
   if (!Book.good()) {
@@ -251,12 +261,6 @@ void delete_book(book a, int id, std::vector<std::string> key) {
 } // namespace books
 
 
-void modify_key(int id, std::vector<std::string> a, std::vector<std::string> b, char* ISBN) {
-  for(auto ai:a) 
-    keywordMap.remove(keywordMap.getinfo(strcat(const_cast<char*>(ai.c_str()), ISBN), id));
-  for(auto ai:b) 
-    keywordMap.ins(strcat(const_cast<char*>(ai.c_str()), ISBN), id);
-}
 
 void read(std::istringstream &stream, char c1, int pri) {
   string s[5] = {"@", "@", "@", "@", "@"};
@@ -311,8 +315,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     int id = Accounts_system::stack::back().book;
     //std::cout<<id<<" "<<std::endl;
     if(!id) return invalid();
-    bool pd[200];
-    memset(pd,0,sizeof(pd));
+    std::unordered_map<char,bool> pd;
     for(int i = 0; i < sz; ++i)
       if(s[i].size() <= 6 || !isalpha(s[i][1]) || pd[s[i][1]-'A'])
         return invalid();
@@ -325,8 +328,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     //assert(0);
     for(int i = 0; i < sz; ++i)
       modify_book_step(id, nw, nw2, s[i]);
-    modify_key(id,books::getkey(nw2.Keywords), books::getkey(nw.Keywords), nw.ISBN);
-    modify_book(id, nw2, nw);
+    if(!strcmp(nw2.ISBN, nw.ISBN))modify_book(id, nw2, nw);
   } break;
   case 'i': {
     // import [Quantity] [TotalCost]

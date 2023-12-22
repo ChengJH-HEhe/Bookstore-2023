@@ -17,8 +17,14 @@ int main(int argc, char * argv[]) {
   Books_system::Init();
   Log_system::Init();
   while (getline(cin, s)) {
+    if(s.empty()) {
+      s = "exit";
+    }
+    // static int a = 0;
+    // std::cerr<<++a<<std::endl;
     int pri = Accounts_system::get_pri();
     // getpri
+    // strtoken
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
