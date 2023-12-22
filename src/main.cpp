@@ -10,8 +10,8 @@ using std::cin;
 
 // 实现 读入指令
 int main(int argc, char * argv[]) {
-  freopen(argv[1],"r",stdin);
-  // freopen("test.out","w",stdout);
+   freopen(argv[1],"r",stdin);
+  //  freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
@@ -28,7 +28,8 @@ int main(int argc, char * argv[]) {
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
-    //std::cerr<<s1<<'\n';
+    static int cnt = 0;
+    std::cerr<<++cnt<<'\n';
     if (s1 == "quit" || s1 == "exit") {
       Accounts_system::read(stream, s1[0], pri);
       Accounts_system::end();

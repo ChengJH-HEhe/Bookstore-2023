@@ -24,7 +24,7 @@ namespace books {
   int find_id(const char *s);
   book find_book(int id);
   int add_book(book a, std::vector<std::string> key);
-  void delete_book(book a, int id, std::vector<std::string>);
+  void delete_book(book a, int id);
   std::ostream& operator<<(std::ostream& out, const book& nw);
   std::vector<std::string> getkey(string nw);
   bool convert(const std::string &s);

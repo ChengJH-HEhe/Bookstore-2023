@@ -49,6 +49,7 @@ struct Map {
 
   Map() = default;
   void init(string s1, string s2);
+  void end();
   void read();
   info getinfo(const char *, ll);
   pair<int, int> getpos(info a);

@@ -50,11 +50,15 @@ void Map::init(string s1, string s2) {
     return;
     // 判断的文件变多，这个文件的要求要升高，一旦加就要更新
   } else {
+    Block.file.close();
     Block.file_name = s1;
     map.file_name = s2;
+    Block.read(block,0);
     Block.file.close();
-    Block.read(block, 0);
   }
+}
+void Map::end() {
+  Block.update(block,0);
 }
 info Map::getinfo(const char *str, ll value) {
   info temp;
@@ -170,7 +174,7 @@ void Map::insert(pair<int, int> pos, info a) {
     block.message[newid].pos = map.write(nw);
   }
   map.update(node, block.message[pos.st].pos);
-  Block.update(block, 0);
+  Block.update(block,0);
 }
 
 void Map::remove(info a) {
@@ -222,8 +226,8 @@ void Map::remove(info a) {
     if (!pos.nd)
       block.message[pos.st].first = node.x[0];
   }
-  Block.update(block, 0);
   map.update(node, block.message[pos.st].pos);
+  Block.update(block,0);
   // now we have block[pos.first] and node[pos.first]
   // remove node[pos.first].x[pos.second]
 }
