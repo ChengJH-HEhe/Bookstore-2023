@@ -37,7 +37,7 @@ bool info::operator==(const info &b) const {
 /*----------------Map Function------------------*/
 
 void Map::init(string s1, string s2) {
-  Block.file.open(s1.c_str());
+  Block.file.open(s1);
   if (!Block.file.good()) {
     Block.initialise(s1);
     map.initialise(s2);
@@ -46,10 +46,15 @@ void Map::init(string s1, string s2) {
     block.message[block.head].first = info(0);
     strcpy(block.message[block.head].first.str, u.c_str());
     block.message[block.head].pos = map.write(node);
+    Block.update(block,0);
+    return;
+    // 判断的文件变多，这个文件的要求要升高，一旦加就要更新
   } else {
+    Block.file_name = s1;
+    map.file_name = s2;
+    Block.file.close();
     Block.read(block, 0);
   }
-  Block.file.close();
 }
 info Map::getinfo(const char *str, ll value) {
   info temp;
@@ -76,7 +81,7 @@ pair<int, int> Map::getpos(info a) {
 }
 int Map::find(const char *a) {
   // find a pos;
-  std::cout<<block.head<<" ";
+  //std::cout<<a << block.head<<std::endl;
   int blockl = block.head, blockr = block.head;
   do {
     blockr = blockl;

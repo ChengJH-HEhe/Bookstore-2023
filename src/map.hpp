@@ -41,9 +41,8 @@ struct __node {
   int size = 0;
 };
 struct Map {
-  string nameForBlock, nameForMap;
-  MemoryRiver<__block, 0> Block;
-  MemoryRiver<__node, 0> map;
+  MemoryRiver<__block> Block;
+  MemoryRiver<__node> map;
   
   __block block;
   __node node;
