@@ -354,7 +354,7 @@ void show(char s, string name, int pri) {
   switch (s) {
   case 'h': {
     std::vector<int> st = bookMap.multifind(nullptr);
-    std::cerr<<st.size();
+    //std::cerr<<st.size();
     if (st.empty())
       std::cout << '\n';
     else {

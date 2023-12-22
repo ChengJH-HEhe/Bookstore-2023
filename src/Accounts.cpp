@@ -102,9 +102,10 @@ void logout() {
 
 void modify_account(int id, Account now) {
   account.open("account");
+  assert(account.good());
   account.seekp((id-1)*sizeof(Account));
   account.write(reinterpret_cast<char*>(&now), sizeof(Account));
-  std::cerr<<now.Password<<" "<<now.UserID<<" "<<now.Username<<"数字？"<<std::endl;
+  std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<"数字？"<<std::endl;
   account.close();
 }
 
@@ -222,8 +223,8 @@ void Init() {
   if(!Accounts::account.good())
     Accounts::account.open("account",std::ios::out);//std::cerr<<"out\n";
   Accounts::account.close();
-  Accounts::acMap.init("BlockAC", "NodeAC");
   Accounts::queue.init();
+  Accounts::acMap.init("BlockAC", "NodeAC");
   stack::Init();
   //assert(0);
 }

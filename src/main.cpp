@@ -22,7 +22,7 @@ int main(int argc, char * argv[]) {
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
-    std::cerr<<s1<<'\n';
+    //std::cerr<<s1<<'\n';
     if (s1 == "quit" || s1 == "exit") {
       Accounts_system::read(stream, s1[0], pri);
       Accounts_system::end();

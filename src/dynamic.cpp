@@ -1,12 +1,13 @@
 #include "dynamic.h"
-
+#include <iostream>
 /*Dynamic::*/
 void Dynamic::init() {
   w.open(filename.c_str());
   if (w.good()) {
-    int tmp_size;
+    int tmp_size = 0;
     w.read(reinterpret_cast<char *>(&idcount), sizeof(int));
     w.read(reinterpret_cast<char *>(&tmp_size), sizeof(int));
+    std::cerr<<tmp_size<<std::endl;
     if (tmp_size) {
       int *nw = new int[tmp_size];
       w.read(reinterpret_cast<char *>(nw), sizeof(nw));
