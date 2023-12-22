@@ -9,8 +9,8 @@
 using std::cin;
 
 // 实现 读入指令
-int main() {
-  //freopen("test.in","r",stdin);
+int main(int argc, char * argv[]) {
+  freopen(argv[1],"r",stdin);
   // freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
@@ -18,12 +18,11 @@ int main() {
   Log_system::Init();
   while (getline(cin, s)) {
     int pri = Accounts_system::get_pri();
-    std::cout<<pri<<std::endl;
     // getpri
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
-    //std::cout << s1 << " \n";
+    std::cerr<<s1<<'\n';
     if (s1 == "quit" || s1 == "exit") {
       Accounts_system::read(stream, s1[0], pri);
       Accounts_system::end();
