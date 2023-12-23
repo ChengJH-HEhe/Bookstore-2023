@@ -163,7 +163,7 @@ void Map::insert(pair<int, int> pos, info a) {
     ++node.size;
   }
 
-  if (node.size > (mxn * 3 / 2)) {
+  if (node.size > (mxn * 2)) {
     __node nw;
     for (int i = mxn; i < node.size; ++i)
       nw.x[nw.size++] = node.x[i];
@@ -173,7 +173,6 @@ void Map::insert(pair<int, int> pos, info a) {
     block.message[newid].pos = map.write(nw);
   }
   map.update(node, block.message[pos.st].pos);
-  Block.update(block,0);
 }
 
 void Map::remove(info a) {
@@ -226,7 +225,6 @@ void Map::remove(info a) {
       block.message[pos.st].first = node.x[0];
   }
   map.update(node, block.message[pos.st].pos);
-  Block.update(block,0);
   // now we have block[pos.first] and node[pos.first]
   // remove node[pos.first].x[pos.second]
 }

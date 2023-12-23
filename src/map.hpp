@@ -11,7 +11,7 @@ using std::pair;
 using std::string;
 typedef long long ll;
 
-const int mxn = 456;
+const int mxn = 512;
 
 struct info {
   char str[82]="\0";

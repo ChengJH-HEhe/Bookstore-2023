@@ -67,7 +67,7 @@ std::vector<std::string> getkey(string nw) {
       v.push_back(nw);
     }
   }
-  std::cerr<<nw<<" "<<v.size()<<std::endl;
+  //std::cerr<<nw<<" "<<v.size()<<std::endl;
   return v;
 }
 
@@ -108,7 +108,7 @@ bool convert(const std::string &s) {
 
 void modify_key(int id, string past, string nw, char *ISBN) {
   std::vector<std::string> a = getkey(past), b = getkey(nw);
-  std::cout<<past<<" "<<nw<<std::endl;
+  //std::cerr<<past<<" "<<nw<<std::endl;
   for (auto ai : a)
     keywordMap.remove(
         keywordMap.getinfo(strcat(const_cast<char *>(ai.c_str()), ISBN), id));
@@ -257,6 +257,7 @@ void modify_book(int id, book past, book nw, int tp = 0) {
     }
     Book.seekp((id - 1) * sizeof(book));
     Book.write(reinterpret_cast<char *>(&nw), sizeof(book));
+    //std::cerr << nw << " " << id<<std::endl;
     Book.close();
   } else if (tp == 1) {
     authorMap.remove(authorMap.getinfo(strcat(past.Author, past.ISBN), id));
@@ -277,6 +278,7 @@ int add_book(book a, std::vector<std::string> key) {
   Book.seekp((id - 1) * sizeof(book));
   Book.write(reinterpret_cast<char *>(&a), sizeof(book));
   Book.close();
+  //std::cout<<a<<" "<<"bookinfo"<< std::endl;
   if (a.BookName[0] != '\0')
     nameMap.ins(strcat(a.BookName, a.ISBN), id);
   if (a.Author[0] != '\0')
@@ -287,7 +289,7 @@ int add_book(book a, std::vector<std::string> key) {
 }
 void delete_book(book a, int id) {
   queue.getback(id);
-  std::cerr << id << " " << a.ISBN << std::endl;
+  //std::cerr << id << " " << a.ISBN << std::endl;
   std::vector<std::string> key = getkey(a.Keywords);
   // assert(find_id(a.ISBN) == -1);
   bookMap.remove(bookMap.getinfo(a.ISBN, id));

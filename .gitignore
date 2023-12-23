@@ -1,12 +1,10 @@
 requirements.md
-
-*.txt
+/build
 *.idx
 /src/advanced
 /src/basic
 /src/complex
 /src/robust
-/build
 src/testdir/2.out
 src/testdir/account
 src/testdir/authorMapAC
