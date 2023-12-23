@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <ostream>
 #include <variant>
 
 // Include the <sstream> header for std::istringstream
@@ -13,29 +14,24 @@ using std::cin;
 int main(int argc, char * argv[]) {
   clock_t start,end;
   start = clock();  //开始时间
-  // freopen(argv[1],"r",stdin);
+  if(argc) freopen(argv[1],"r",stdin);
   //freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
   Log_system::Init();
   while (getline(cin, s)) {
-    if(s.empty()) {
-      s = "exit";
-    }
     static int a = 0;
-    if(++a % 500 == 0) {
-         end = clock();   //结束时间
-        std::cerr<<"time = "<<double(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
-    }
     int pri = Accounts_system::get_pri();
+    std::cerr<<++a << "Pri = "<< pri << std::endl;
+    //std::cerr<<pri<<std::endl;
     // getpri
     // strtoken
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
     if (s1 == "quit" || s1 == "exit") {
-      Accounts_system::read(stream, s1[0], pri);
+      Accounts_system::read(stream, 'q', pri);
       goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")

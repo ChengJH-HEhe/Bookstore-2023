@@ -30,7 +30,7 @@ struct Account {
 
 
 int Find_id(const char *s);
-Account Find_accounts(int id);
+void Find_accounts(Account&, int id);
 void modify_account(int id, Account now);
 void registerUser(Account, int pri = 1);
 void deleteUser(char *a, int id);

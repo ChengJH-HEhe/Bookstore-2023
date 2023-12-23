@@ -23,7 +23,7 @@ void Dynamic::init() {
 }
 void Dynamic::end() {
   int tmpsize = wait.size();
-  w.open("wait");
+  w.open(filename.c_str());
   w.write(reinterpret_cast<char *>(&idcount), sizeof(int));
   w.write(reinterpret_cast<char *>(&tmpsize), sizeof(int));
   if (tmpsize) {

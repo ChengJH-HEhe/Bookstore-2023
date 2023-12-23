@@ -24,6 +24,7 @@ void Init() {
     // 依赖 acMap
     Accounts::accountsInit();
   } else {
+    stack.close();
     int stacksize;
     stack.read(reinterpret_cast<char *>(&stacksize), sizeof(int));
     mystack *st = new mystack[stacksize];
@@ -31,7 +32,6 @@ void Init() {
     for (int i = 0; i < stacksize; ++i)
       vector_st.push_back(st[i]);
     delete[] st;
-    stack.close();
   }
 }
 
@@ -50,11 +50,21 @@ void end() {
   stack.close();
 }
 void select(int bookid) {
+  if (!bookid) {
+    while (vector_st.size()) {
+      Accounts::Account x;
+      int id = vector_st.back().id;
+      Accounts::Find_accounts(x, id);
+      if (x.sta) {
+        x.sta = 0;
+        Accounts::modify_account(id, x);
+      }
+      vector_st.pop_back();
+    }
+    return;
+  }
   if (vector_st.empty()) {
-    if (bookid)
-      return invalid();
-    else
-      return;
+    return invalid();
   }
   vector_st.back().book = bookid;
 }
@@ -78,22 +88,22 @@ void accountsInit() {
 }
 int Find_id(const char *s) {
   // User ID
-  // std::cerr<<s<<" "<<acMap.find(s)<<std::endl, 
+  // std::cerr<<s<<" "<<acMap.find(s)<<std::endl,
   return acMap.find(s);
 }
-Account Find_accounts(int id) {
-  Account nw;
+void Find_accounts(Account &nw, int id) {
   account.open("account");
+  assert(account.is_open());
   account.seekg((id - 1) * sizeof(Account));
   account.read(reinterpret_cast<char *>(&nw), sizeof(Account));
   account.close();
-  return nw;
 }
 void logout() {
   if (stack::vector_st.empty())
     return invalid();
   else {
-    Account now = Find_accounts(stack::vector_st.back().id);
+    Account now;
+    Find_accounts(now, stack::vector_st.back().id);
     now.sta--;
     modify_account(stack::vector_st.back().id, now);
     stack::vector_st.pop_back();
@@ -102,11 +112,9 @@ void logout() {
 
 void modify_account(int id, Account now) {
   account.open("account");
-  assert(account.good());
   account.seekp((id - 1) * sizeof(Account));
   account.write(reinterpret_cast<char *>(&now), sizeof(Account));
-  // std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<"
-  // "<<now.Username<<"数字？"<<std::endl;
+  std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<" "<<now.sta<<" "<<"数字？"<<std::endl;
   account.close();
 }
 
@@ -147,11 +155,11 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     int id = Find_id(s[0].c_str());
     if (id == -1)
       return invalid();
-    Account candidate = Find_accounts(id);
-    // std::cout << "candidaate" << candidate.Password <<std::endl;
+    Account candidate;
+    Find_accounts(candidate, id);
+    // std::cout << "candidaate" << id << " " << candidate.Password <<std::endl;
     if (!pd(s[0]) || (sz == 2 && !pd(s[1])))
       return invalid();
-    // std::cout<<1;
     if (sz == 1) {
       if (su_pri <= candidate.Pri)
         return invalid();
@@ -159,7 +167,8 @@ void read(std::istringstream &stream, char tp, int su_pri) {
         candidate.sta++;
     } else {
       if (strcmp(candidate.Password, s[1].c_str()))
-        return invalid(); // std::cerr<<candidate.Password << " "
+        return 
+               invalid(); // std::cerr<<candidate.Password << " "
                           // <<s[1].c_str(), invalid();
       else
         candidate.sta++;
@@ -188,7 +197,9 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     int id = Find_id(s[0].c_str());
     if (id == -1)
       return invalid();
-    Account now = Find_accounts(id);
+    Account now;
+    Find_accounts(now, id);
+    //std::cerr << id << " " << now.Password << " " << now.UserID << std::endl;
     if (su_pri < 1 || (sz == 3 && strcmp(now.Password, s[1].c_str())) ||
         (sz == 2 && su_pri != 7))
       return invalid();
@@ -215,8 +226,10 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     if (su_pri != 7 || !pd(s[0]))
       return invalid();
     int id = Find_id(s[0].c_str());
-    if (id == -1 || Find_accounts(id).sta)
-      return invalid();
+    Account nw;
+    Find_accounts(nw, id);
+    if (id == -1 || nw.sta)
+      return std::cerr << id << nw.sta << " ", invalid();
     deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {

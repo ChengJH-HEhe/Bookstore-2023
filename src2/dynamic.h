@@ -15,7 +15,7 @@ inline bool pd_loose(std::string s) {
   for (int i = 0; i < s.size(); ++i)
     if (std::iscntrl(s[i]))
       return false;
-  return true;
+  return true; 
 }
 
 inline bool pd(std::string s) {

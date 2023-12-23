@@ -2,6 +2,7 @@
 #define BOOKS_H
 
 #include<sstream>
+#include <string>
 #include <vector>
 #include "dynamic.h"
 #include"map.hpp"
@@ -20,9 +21,13 @@ namespace books {
     double Price = 0.0;
     double TotalCost = 0.0;
     book(const char *a){if(a)strcpy(ISBN,a);}
+    bool operator< (const book& b) const{
+      return strcmp(ISBN, b.ISBN) < 0;
+    }
   };
   int find_id(const char *s);
   book find_book(int id);
+  string find_book_ISBN(int id);
   int add_book(book a, const std::vector<std::string> &key);
   void delete_book(book a, int id);
   std::ostream& operator<<(std::ostream& out, const book& nw);

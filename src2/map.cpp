@@ -112,6 +112,7 @@ void Map::multifind(std::vector<int> &v, const char *a) {
         if(node.x[i].val)v.push_back(node.x[i].val);
       nw = block.message[nw].nxt;
     }
+    return;
   }
   
   int blockl = block.head, blockr = block.head;
@@ -135,6 +136,8 @@ void Map::multifind(std::vector<int> &v, const char *a) {
       }
     blockr = block.message[blockr].nxt;
   }
+  
+
 }
 
 #define st first

@@ -3,6 +3,7 @@
 #include "accounts.h"
 #include "invalid.h"
 #include "map.hpp"
+#include <algorithm>
 #include <cassert>
 #include <climits>
 #include <cstring>
@@ -26,7 +27,7 @@ void Init() {
   if (!Book.good())
     Book.open("Book", std::ios::out);
   Book.close();
-
+  queue.init();
   bookMap.init("bookAC", "bookNodeAC");
   keywordMap.init("keywordAC", "keywordNodeAC");
   nameMap.init("nameMapAC", "nameMapNodeAC");
@@ -91,7 +92,7 @@ long long pd_info(string s, string tp) {
     long long num = 0;
     for (auto i = s.begin(); i != s.end(); ++i)
       if (!isdigit(*i) || num > INT_MAX)
-        return 0;
+        return -1;
       else
         num = num * 10 + (*i - '0');
     return num;
@@ -248,6 +249,15 @@ book find_book(int id) {
   Book.close();
   return nw;
 }
+string find_book_ISBN(int id) {
+  // 保证id合法
+  char nw[21];
+  Book.open("Book");
+  Book.seekg((id - 1) * sizeof(book));
+  Book.read(reinterpret_cast<char *>(&nw), sizeof(nw));
+  Book.close();
+  return string(nw);
+}
 
 void modify_book(int id, book& past, book& nw, int tp = 0) {
   if (tp == 0) {
@@ -328,6 +338,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     if (sz != 2 || !books::pd_info(s[0], "ISBN")) {
       return invalid();
     } else {
+
       long long num = 0;
       for (auto i = s[1].begin(); i != s[1].end(); ++i)
         if (!isdigit(*i) || num > INT_MAX)
@@ -335,9 +346,12 @@ void read(std::istringstream &stream, char c1, int pri) {
         else
           num = num * 10 + (*i - '0');
       int id = bookMap.find(s[0].c_str());
+      std::cerr<<id<<std::endl;
       if (id == -1)
         return invalid();
+
       books::book nw = books::find_book(id);
+      std::cerr<<nw.Quantity<<" "<<s[0]<<" "<<nw.ISBN<<" "<<id<<std::endl;
       if (nw.Quantity < num || num == 0)
         return invalid();
       nw.Quantity -= num;
@@ -351,6 +365,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     if (pri < 3 || sz != 1 || !books::pd_info(s[0], "ISBN"))
       return invalid();
     int id = bookMap.find(s[0].c_str());
+    std::cerr<< id << " " << s[0].c_str() << std::endl;
     if (id == -1)
       id = books::add_book(books::book(s[0].c_str()),
                            std::vector<std::string>());
@@ -405,6 +420,7 @@ void read(std::istringstream &stream, char c1, int pri) {
   }
 }
 void show(char s, string name, int pri) {
+  std::vector<int> st;
   // h I N A K
   // 遍历map输出
   if (pri < 1)
@@ -428,35 +444,28 @@ void show(char s, string name, int pri) {
       std::cout << '\n';
   } break;
   case 'n': {
-    std::vector<int> st;
     nameMap.multifind(st, name.c_str());
-    if (st.empty())
-      std::cout << '\n';
-    else {
-      for (auto i : st)
-        std::cout << books::find_book(i);
-    }
   } break;
   case 'a': {
-    std::vector<int> st;
     authorMap.multifind(st, name.c_str());
-    if (st.empty())
-      std::cout << '\n';
-    else {
-      for (auto i : st)
-        std::cout << books::find_book(i);
-    }
   } break;
   case 'k': {
-    std::vector<int> st;
     keywordMap.multifind(st, name.c_str());
+  } break;
+  }
+  if(s == 'n' || s == 'a' || s == 'k') {
     if (st.empty())
       std::cout << '\n';
     else {
+      std::vector<std::pair<books::book, int>> v_ISBN;
+      v_ISBN.clear();
       for (auto i : st)
-        std::cout << books::find_book(i);
+        v_ISBN.push_back(std::move(std::make_pair((books::find_book(i)),i)));
+      std::sort(v_ISBN.begin(), v_ISBN.end());
+      for(auto i : v_ISBN) {
+        std::cout << i.first;
+      }
     }
-  } break;
   }
 }
 
