@@ -6,16 +6,18 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <iostream>
 namespace Log_system {
 std::vector<std::pair<double, double>> history;
 std::fstream log;
 void add(double money) {
   std::pair<double, double> q;
-  if (money < 1e-6) {
+  if (money <1e-6) {
     q = std::make_pair(0.0, -money);
   } else {
     q = std::make_pair(money, 0.0);
   }
+  //if(history.size())std::cerr<<history.back().first<<" "<<history.back().second<<std::endl;
   if (history.empty()) {
     history.push_back(q);
   } else {
@@ -42,13 +44,16 @@ void read(std::istringstream &stream, char c, int pri) {
           num1 = num1 * 10 + (*i - '0');
       num = num1;
     }
-    if (num > history.size())
+    if(!num) {
+      return puts(""),void();
+    } else if (num > history.size())
       return invalid();
     else if (num == history.size()) {
       std::pair<double, double> q =
           history.size() ? history.back() : std::make_pair(0.0, 0.0);
       printf("+ %.2lf - %.2lf\n", q.first, q.second);
     } else {
+      //std::cout<<num<<" "<<history.size()<<std::endl;
       std::pair<double, double> q = history[history.size() - num - 1];
       printf("+ %.2lf - %.2lf\n", history.back().first - q.first, history.back().second -  q.second);
     }
@@ -61,11 +66,11 @@ void Log() {}
 void Init() {
   log.open("log");
   if (log.good()) {
-    int tmp_size;
+    int tmp_size = 0;
     log.read(reinterpret_cast<char *>(&tmp_size), sizeof(int));
     if (tmp_size) {
       double *nw = new double[tmp_size * 2];
-      log.read(reinterpret_cast<char *>(nw), sizeof(nw));
+      log.read(reinterpret_cast<char *>(nw), tmp_size*2*sizeof(double));
       for (int i = 0; i < tmp_size; ++i)
         history.push_back(std::make_pair(nw[i * 2], nw[i * 2 + 1]));
       delete[] nw;
@@ -78,10 +83,13 @@ void Init() {
 void end() {
   log.open("log");
   int sz = history.size();
+  //std::cerr<<sz<<std::endl;
   log.write(reinterpret_cast<char *>(&sz), sizeof(int));
-  for (int i = 0; i < sz; ++i)
-    log.write(reinterpret_cast<char *>(&history[i].first), sizeof(double)),
-        log.write(reinterpret_cast<char *>(&history[i].second), sizeof(double));
+  for (int i = 0; i < sz; ++i) {
+    double a = history[i].first, b = history[i].second;
+    log.write(reinterpret_cast<char *>(&a), sizeof(double)),
+        log.write(reinterpret_cast<char *>(&b), sizeof(double));
+  }
   log.close();
 }
 } // namespace Log_system
