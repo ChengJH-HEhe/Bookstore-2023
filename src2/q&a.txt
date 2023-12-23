@@ -1,0 +1,29 @@
+0. 读入关联
+1. 函数定义
+2. 账号存储 char* -> id -> info
+3. 读入时 获取Pri
+4. 关键词查找 ISBN ->int(unique) 或 name->int 或 author->int  或 keyword -> int
+5. 图书存储 ISBN -> id -> book_info
+6. printbook(int) 
+7. 如何使多个map并存不冲突？ 
+    命名为不同文件，已实现封装
+
+MemoryRiver 实现的是
+
+key value 二元组有序 支持，
+插入二元组，删除二元组，
+
+这里只需 key 有序
+
+Map:
+根据（ID,NAME,AUTHOR,KEYWORD key）找到 val 
+删除Info
+修改映射为val处的 修改 INFO
+
+ISBN, NAME AUTHOR, KEYWORD 
+
+Step 1 
+Accounts_system : read
+
+参数取几个？
+
