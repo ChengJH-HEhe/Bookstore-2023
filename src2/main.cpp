@@ -14,7 +14,7 @@ using std::cin;
 int main(int argc, char * argv[]) {
   clock_t start,end;
   start = clock();  //开始时间
-  if(argc) freopen(argv[1],"r",stdin);
+  //if(argc) freopen(argv[1],"r",stdin);
   //freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
