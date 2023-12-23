@@ -14,8 +14,8 @@ namespace books {
   long long pd_info(std::string nw, std::string tp);
   struct book {
     book() = default;
-    char ISBN[21]="", BookName[61]="", Author[61]="";
-    char Keywords[61] = "";
+    char ISBN[21]="\0", BookName[61]="\0", Author[61]="\0";
+    char Keywords[61] = "\0";
     int Quantity = 0;
     double Price = 0.0;
     double TotalCost = 0.0;

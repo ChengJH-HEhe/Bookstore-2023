@@ -78,7 +78,8 @@ void accountsInit() {
 }
 int Find_id(const char *s) {
   // User ID
-  return std::cerr<<s<<" "<<acMap.find(s)<<std::endl, acMap.find(s);
+  // std::cerr<<s<<" "<<acMap.find(s)<<std::endl, 
+  return acMap.find(s);
 }
 Account Find_accounts(int id) {
   Account nw;

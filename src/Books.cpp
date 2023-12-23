@@ -25,7 +25,7 @@ void Init() {
   if (!Book.good())
     Book.open("Book", std::ios::out);
   Book.close();
-  
+
   bookMap.init("bookAC", "bookNodeAC");
   keywordMap.init("keywordAC", "keywordNodeAC");
   nameMap.init("nameMapAC", "nameMapNodeAC");
@@ -59,12 +59,15 @@ std::vector<std::string> getkey(string nw) {
       nw = nw.substr(x + 1);
     }
   }
-  if (nw.size() && (!pd_info(nw, "key") || mp.find(nw) != mp.end())) {
-    v.clear();
-    return v;
-  } else {
-    v.push_back(nw);
+  if (nw.size()){
+    if (!pd_info(nw, "key") || mp.find(nw) != mp.end()) {
+      v.clear();
+      return v;
+    } else {
+      v.push_back(nw);
+    }
   }
+  std::cerr<<nw<<" "<<v.size()<<std::endl;
   return v;
 }
 
@@ -105,6 +108,7 @@ bool convert(const std::string &s) {
 
 void modify_key(int id, string past, string nw, char *ISBN) {
   std::vector<std::string> a = getkey(past), b = getkey(nw);
+  std::cout<<past<<" "<<nw<<std::endl;
   for (auto ai : a)
     keywordMap.remove(
         keywordMap.getinfo(strcat(const_cast<char *>(ai.c_str()), ISBN), id));
@@ -283,9 +287,9 @@ int add_book(book a, std::vector<std::string> key) {
 }
 void delete_book(book a, int id) {
   queue.getback(id);
-  std::cerr<<id<<" " << a.ISBN<<std::endl;
+  std::cerr << id << " " << a.ISBN << std::endl;
   std::vector<std::string> key = getkey(a.Keywords);
-  //assert(find_id(a.ISBN) == -1);
+  // assert(find_id(a.ISBN) == -1);
   bookMap.remove(bookMap.getinfo(a.ISBN, id));
   if (a.BookName[0] != '\0')
     nameMap.remove(nameMap.getinfo(strcat(a.BookName, a.ISBN), id));
@@ -365,9 +369,12 @@ void read(std::istringstream &stream, char c1, int pri) {
         return invalid();
     // assert(0);
     for (int i = 0; i < sz; ++i) {
+      //std::cout<<i<<std::endl;
       modify_book_step(id, nw, nw2, s[i]);
+      //std::cout<<i<<std::endl;
     }
-    if(!strcmp(nw2.ISBN,nw.ISBN))modify_book(id,nw2, nw, 0);
+    if (!strcmp(nw2.ISBN, nw.ISBN))
+      modify_book(id, nw2, nw, 0);
     if (strcmp(nw2.Author, nw.Author))
       modify_book(id, nw2, nw, 1);
     if (strcmp(nw2.BookName, nw.BookName))

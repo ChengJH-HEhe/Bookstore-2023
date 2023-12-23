@@ -14,7 +14,7 @@ typedef long long ll;
 const int mxn = 456;
 
 struct info {
-  char str[82];
+  char str[82]="\0";
   ll val = 0;
   info(ll va = 0) { val = va; }
   bool operator<(const info &b) const;

@@ -46,7 +46,6 @@ void Map::init(string s1, string s2) {
     block.message[block.head].first = info(0);
     strcpy(block.message[block.head].first.str, u.c_str());
     block.message[block.head].pos = map.write(node);
-    Block.update(block,0);
     return;
     // 判断的文件变多，这个文件的要求要升高，一旦加就要更新
   } else {
