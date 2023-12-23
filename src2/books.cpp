@@ -162,15 +162,15 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
     if (s1.size() <= 11 || s1.substr(0, 10) != str[3] || s1.back() != '\"')
       return false;
     else {
-      // std::unordered_map<std::string,bool> map;
-      // map.clear();
+      std::unordered_map<std::string,bool> map;
+      map.clear();
       string s = s1.substr(10);
       s.pop_back();
       std::vector<std::string> key = getkey(s);
       for (auto i : key)
-        if (!pd_info(i, "key"))
+        if (!pd_info(i, "key") || map.find(i) != map.end())
           return false;
-        //else map[i] = 1;
+        else map[i] = 1;
       if (key.size())
         return true;
       return false;
