@@ -102,16 +102,8 @@ int Map::find(const char *a) {
   return -1;
 }
 
-int cmp(char* a, const char* b){
-  for(int i = 0; b[i]!='\0' && a[i] != '\0'; ++i)
-    if(a[i]<b[i])return -1;
-    else if(b[i]<a[i])return 1;
-  if(strlen(a) > strlen(b)) return 0;
-  else return -1;
-}
 
-std::vector<int> Map::multifind(const char *a) {
-  std::vector<int> v;
+void Map::multifind(std::vector<int> &v, const char *a) {
   if(a == nullptr) {
     int nw = block.head;
     while(nw){
@@ -120,31 +112,29 @@ std::vector<int> Map::multifind(const char *a) {
         if(node.x[i].val)v.push_back(node.x[i].val);
       nw = block.message[nw].nxt;
     }
-    return v;
   }
   
   int blockl = block.head, blockr = block.head;
   do {
     blockr = blockl;
     blockl = block.message[blockl].nxt;
-  } while (blockl && cmp(block.message[blockl].first.str, a) < 0);
+  } while (blockl && strcmp(block.message[blockl].first.str, a) < 0);
   blockl = blockr;
   bool pd = 0;
   map.read(node, block.message[blockl].pos);
   for (int i = 0; i < node.size; ++i)
-    if (!cmp(node.x[i].str, a)) {
+    if (!strcmp(node.x[i].str, a)) {
       v.push_back(node.x[i].val);
     }
   blockr = block.message[blockr].nxt;
-  while (blockr && cmp(block.message[blockr].first.str, a) == 0) {
+  while (blockr && strcmp(block.message[blockr].first.str, a) == 0) {
     map.read(node, block.message[blockr].pos);
     for (int i = 0; i < node.size; ++i)
-      if (!cmp(node.x[i].str, a)) {
+      if (!strcmp(node.x[i].str, a)) {
         v.push_back(node.x[i].val);
       }
     blockr = block.message[blockr].nxt;
   }
-  return v;
 }
 
 #define st first

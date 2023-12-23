@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <vector>
 namespace Books_system {
@@ -108,12 +109,11 @@ bool convert(const std::string &s) {
 
 void modify_key(int id, string past, string nw, char *ISBN) {
   std::vector<std::string> a = getkey(past), b = getkey(nw);
-  //std::cerr<<past<<" "<<nw<<std::endl;
   for (auto ai : a)
     keywordMap.remove(
-        keywordMap.getinfo(strcat(const_cast<char *>(ai.c_str()), ISBN), id));
+        keywordMap.getinfo(ai.c_str(), id));
   for (auto ai : b)
-    keywordMap.ins(strcat(const_cast<char *>(ai.c_str()), ISBN), id);
+    keywordMap.ins(const_cast<char*>(ai.c_str()), id);
 }
 bool pd_book_step(int &id, book &nw, std::string s1) {
   static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
@@ -187,7 +187,7 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
   }
   }
 }
-void modify_book_step(int &id, book &nw, book &past, std::string s1) {
+void modify_book_step(int &id, book &nw, book &past,const std::string& s1) {
   static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
                          "-price="};
   switch (s1[1]) {
@@ -249,7 +249,7 @@ book find_book(int id) {
   return nw;
 }
 
-void modify_book(int id, book past, book nw, int tp = 0) {
+void modify_book(int id, book& past, book& nw, int tp = 0) {
   if (tp == 0) {
     Book.open("Book");
     if (!Book.good()) {
@@ -257,18 +257,17 @@ void modify_book(int id, book past, book nw, int tp = 0) {
     }
     Book.seekp((id - 1) * sizeof(book));
     Book.write(reinterpret_cast<char *>(&nw), sizeof(book));
-    //std::cerr << nw << " " << id<<std::endl;
     Book.close();
   } else if (tp == 1) {
-    authorMap.remove(authorMap.getinfo(strcat(past.Author, past.ISBN), id));
-    authorMap.ins(strcat(nw.Author, nw.ISBN), id);
+    authorMap.remove(authorMap.getinfo(past.Author, id));
+    authorMap.ins(nw.Author, id);
   } else if (tp == 2) {
-    nameMap.remove(nameMap.getinfo(strcat(past.BookName, past.ISBN), id));
-    nameMap.ins(strcat(nw.BookName, nw.ISBN), id);
+    nameMap.remove(nameMap.getinfo(past.BookName, id));
+    nameMap.ins(nw.BookName, id);
   }
 }
 
-int add_book(book a, std::vector<std::string> key) {
+int add_book(book a,const std::vector<std::string> & key) {
   int id = queue.getid();
   bookMap.ins(a.ISBN, id);
   Book.open("Book");
@@ -280,11 +279,11 @@ int add_book(book a, std::vector<std::string> key) {
   Book.close();
   //std::cout<<a<<" "<<"bookinfo"<< std::endl;
   if (a.BookName[0] != '\0')
-    nameMap.ins(strcat(a.BookName, a.ISBN), id);
+    nameMap.ins(a.BookName, id);
   if (a.Author[0] != '\0')
-    authorMap.ins(strcat(a.Author, a.ISBN), id);
+    authorMap.ins(a.Author, id);
   for (auto i : key)
-    keywordMap.ins(std::strcat(const_cast<char *>(i.c_str()), a.ISBN), id);
+    keywordMap.ins(const_cast<char *>(i.c_str()), id);
   return id;
 }
 void delete_book(book a, int id) {
@@ -294,15 +293,17 @@ void delete_book(book a, int id) {
   // assert(find_id(a.ISBN) == -1);
   bookMap.remove(bookMap.getinfo(a.ISBN, id));
   if (a.BookName[0] != '\0')
-    nameMap.remove(nameMap.getinfo(strcat(a.BookName, a.ISBN), id));
+    nameMap.remove(nameMap.getinfo(a.BookName, id));
   if (a.Author[0] != '\0')
-    authorMap.remove(authorMap.getinfo(strcat(a.Author, a.ISBN), id));
+    authorMap.remove(authorMap.getinfo(a.Author, id));
   for (auto i : key)
     keywordMap.remove(
-        keywordMap.getinfo(strcat(const_cast<char *>(i.c_str()), a.ISBN), id));
+        keywordMap.getinfo(const_cast<char *>(i.c_str()), id));
 }
 
 } // namespace books
+
+
 
 void read(std::istringstream &stream, char c1, int pri) {
   string s[5] = {"@", "@", "@", "@", "@"};
@@ -410,8 +411,8 @@ void show(char s, string name, int pri) {
     return invalid();
   switch (s) {
   case 'h': {
-    std::vector<int> st = bookMap.multifind(nullptr);
-    // std::cerr<<st.size();
+    std::vector<int> st;
+    bookMap.multifind(st,nullptr);
     if (st.empty())\
       std::cout << '\n';
     else {
@@ -427,7 +428,8 @@ void show(char s, string name, int pri) {
       std::cout << '\n';
   } break;
   case 'n': {
-    std::vector<int> st = nameMap.multifind(name.c_str());
+    std::vector<int> st;
+    nameMap.multifind(st, name.c_str());
     if (st.empty())
       std::cout << '\n';
     else {
@@ -436,7 +438,8 @@ void show(char s, string name, int pri) {
     }
   } break;
   case 'a': {
-    std::vector<int> st = authorMap.multifind(name.c_str());
+    std::vector<int> st;
+    authorMap.multifind(st, name.c_str());
     if (st.empty())
       std::cout << '\n';
     else {
@@ -445,7 +448,8 @@ void show(char s, string name, int pri) {
     }
   } break;
   case 'k': {
-    std::vector<int> st = keywordMap.multifind(name.c_str());
+    std::vector<int> st;
+    keywordMap.multifind(st, name.c_str());
     if (st.empty())
       std::cout << '\n';
     else {

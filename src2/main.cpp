@@ -9,9 +9,12 @@
 using std::cin;
 
 // 实现 读入指令
+
 int main(int argc, char * argv[]) {
+  clock_t start,end;
+  start = clock();  //开始时间
    freopen(argv[1],"r",stdin);
-  //  freopen("test.out","w",stdout);
+  freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
@@ -20,7 +23,11 @@ int main(int argc, char * argv[]) {
     if(s.empty()) {
       s = "exit";
     }
-    // static int a = 0;
+    static int a = 0;
+    if(++a % 500 == 0) {
+         end = clock();   //结束时间
+        std::cerr<<"time = "<<double(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+    }
     // std::cerr<<++a<<std::endl;
     int pri = Accounts_system::get_pri();
     // getpri
@@ -28,14 +35,9 @@ int main(int argc, char * argv[]) {
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
-    static int cnt = 0;
-    std::cerr<<++cnt<<'\n';
     if (s1 == "quit" || s1 == "exit") {
       Accounts_system::read(stream, s1[0], pri);
-      Accounts_system::end();
-      Books_system::end();
-      Log_system::end();
-      return 0;
+      goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")
       Accounts_system::read(stream, s1[0], pri);
@@ -111,7 +113,10 @@ int main(int argc, char * argv[]) {
       invalid();
     }
   }
+  retu:;
   Accounts_system::end();
   Books_system::end();
   Log_system::end();
+   end = clock();   //结束时间
+  std::cerr<<"time = "<<double(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
 }

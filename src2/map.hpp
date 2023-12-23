@@ -11,10 +11,10 @@ using std::pair;
 using std::string;
 typedef long long ll;
 
-const int mxn = 512;
+const int mxn = 200;
 
 struct info {
-  char str[82]="\0";
+  char str[62]="\0";
   ll val = 0;
   info(ll va = 0) { val = va; }
   bool operator<(const info &b) const;
@@ -54,7 +54,7 @@ struct Map {
   info getinfo(const char *, ll);
   pair<int, int> getpos(info a);
   int find(const char *a);
-  std::vector<int> multifind(const char *);
+  void multifind(std::vector<int>&, const char *);
 
   
 #define st first
