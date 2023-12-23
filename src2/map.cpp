@@ -146,6 +146,7 @@ void Map::insert(pair<int, int> pos, info a) {
     block.message[pos.st].first = a;
   if (pos.nd == node.size) {
     node.x[node.size++] = a;
+    
   } else {
     for (int i = node.size; i > pos.nd; --i)
       node.x[i] = node.x[i - 1];

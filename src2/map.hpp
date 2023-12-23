@@ -37,8 +37,8 @@ struct __block {
   int addnew(int id1);
 };
 struct __node {
-  info x[2 * mxn + 5] = {};
   int size = 0;
+  info x[2 * mxn + 5] = {};
 };
 struct Map {
   MemoryRiver<__block> Block;

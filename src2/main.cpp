@@ -13,8 +13,8 @@ using std::cin;
 int main(int argc, char * argv[]) {
   clock_t start,end;
   start = clock();  //开始时间
-   freopen(argv[1],"r",stdin);
-  freopen("test.out","w",stdout);
+  // freopen(argv[1],"r",stdin);
+  //freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
@@ -28,7 +28,6 @@ int main(int argc, char * argv[]) {
          end = clock();   //结束时间
         std::cerr<<"time = "<<double(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
     }
-    // std::cerr<<++a<<std::endl;
     int pri = Accounts_system::get_pri();
     // getpri
     // strtoken
