@@ -162,12 +162,15 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
     if (s1.size() <= 11 || s1.substr(0, 10) != str[3] || s1.back() != '\"')
       return false;
     else {
+      // std::unordered_map<std::string,bool> map;
+      // map.clear();
       string s = s1.substr(10);
       s.pop_back();
       std::vector<std::string> key = getkey(s);
       for (auto i : key)
         if (!pd_info(i, "key"))
           return false;
+        //else map[i] = 1;
       if (key.size())
         return true;
       return false;
@@ -346,12 +349,12 @@ void read(std::istringstream &stream, char c1, int pri) {
         else
           num = num * 10 + (*i - '0');
       int id = bookMap.find(s[0].c_str());
-      std::cerr<<id<<std::endl;
+      //std::cerr<<id<<std::endl;
       if (id == -1)
         return invalid();
 
       books::book nw = books::find_book(id);
-      std::cerr<<nw.Quantity<<" "<<s[0]<<" "<<nw.ISBN<<" "<<id<<std::endl;
+      //std::cerr<<nw.Quantity<<" "<<s[0]<<" "<<nw.ISBN<<" "<<id<<std::endl;
       if (nw.Quantity < num || num == 0)
         return invalid();
       nw.Quantity -= num;
@@ -365,7 +368,6 @@ void read(std::istringstream &stream, char c1, int pri) {
     if (pri < 3 || sz != 1 || !books::pd_info(s[0], "ISBN"))
       return invalid();
     int id = bookMap.find(s[0].c_str());
-    std::cerr<< id << " " << s[0].c_str() << std::endl;
     if (id == -1)
       id = books::add_book(books::book(s[0].c_str()),
                            std::vector<std::string>());

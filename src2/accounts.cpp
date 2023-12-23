@@ -1,5 +1,6 @@
 #include "accounts.h"
 #include "dynamic.h"
+#include "invalid.h"
 #include <cassert>
 #include <cstdio>
 #include <fstream> // Include the missing header file
@@ -114,7 +115,7 @@ void modify_account(int id, Account now) {
   account.open("account");
   account.seekp((id - 1) * sizeof(Account));
   account.write(reinterpret_cast<char *>(&now), sizeof(Account));
-  std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<" "<<now.sta<<" "<<"数字？"<<std::endl;
+  //std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<" "<<now.sta<<" "<<"数字？"<<std::endl;
   account.close();
 }
 
@@ -229,14 +230,13 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     Account nw;
     Find_accounts(nw, id);
     if (id == -1 || nw.sta)
-      return std::cerr << id << nw.sta << " ", invalid();
+      return invalid();
     deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {
     logout();
   } break;
   default: {
-    stack::select(0);
   } break;
   }
 }

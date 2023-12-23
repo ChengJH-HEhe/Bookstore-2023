@@ -23,7 +23,7 @@ int main(int argc, char * argv[]) {
   while (getline(cin, s)) {
     static int a = 0;
     int pri = Accounts_system::get_pri();
-    std::cerr<<++a << "Pri = "<< pri << std::endl;
+    //std::cerr<<++a<<" ";
     //std::cerr<<pri<<std::endl;
     // getpri
     // strtoken
@@ -31,13 +31,11 @@ int main(int argc, char * argv[]) {
     std::string s1;
     stream >> s1;
     if (s1 == "quit" || s1 == "exit") {
-      Accounts_system::read(stream, 'q', pri);
       goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")
       Accounts_system::read(stream, s1[0], pri);
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" || s1 == "import")
-      //std::cout<<s<<std::endl, 
       Books_system::read(stream, s1[0], pri);
       //std::cout<<s<<std::endl;
     else if (s1 == "report") {
@@ -109,6 +107,7 @@ int main(int argc, char * argv[]) {
     }
   }
   retu:;
+  Accounts_system::stack::select(0);
   Accounts_system::end();
   Books_system::end();
   Log_system::end();
