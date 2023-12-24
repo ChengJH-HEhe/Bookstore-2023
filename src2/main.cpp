@@ -11,6 +11,14 @@ using std::cin;
 
 // 实现 读入指令
 
+bool onlySpaces(const std::string& str) {
+    for (char c : str) {
+        if (std::isspace(c) && c != ' ') {
+            return false;
+        }
+    }
+    return true;
+}
 int main(int argc, char * argv[]) {
   clock_t start,end;
   start = clock();  //开始时间
@@ -22,6 +30,7 @@ int main(int argc, char * argv[]) {
   Log_system::Init();
   while (getline(cin, s)) {
     static int a = 0;
+    if(!onlySpaces(s)) invalid();
     int pri = Accounts_system::get_pri();
     //std::cerr<<++a<<" ";
     //std::cerr<<pri<<std::endl;
@@ -31,6 +40,8 @@ int main(int argc, char * argv[]) {
     std::string s1;
     stream >> s1;
     if (s1 == "quit" || s1 == "exit") {
+      stream>>s1;
+      if(s1.size() != 0) return invalid(),0;
       goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")

@@ -411,7 +411,7 @@ void read(std::istringstream &stream, char c1, int pri) {
         return invalid();
       double TotalCost = std::stod(s[1]);
       int id = Accounts_system::stack::back().book;
-      if (!id || TotalCost < 1e-6)
+      if (!id || TotalCost < 1e-13)
         return invalid();
       books::book nw = books::find_book(id);
       nw.Quantity += num;
