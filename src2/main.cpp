@@ -23,7 +23,7 @@ bool onlySpaces(const std::string &str) {
 }
 
 void show(std::istringstream &stream,std::string s1, int pri) {
-  std::string s[5];
+  std::string s[10];
   int sz = 0;
   while(sz<=4 && stream>>s[sz++]);
   --sz;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
   start = clock(); // 开始时间
   // if(argc) freopen(argv[1],"r",stdin);
   // freopen("test.out","w",stdout);
-  
+
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
