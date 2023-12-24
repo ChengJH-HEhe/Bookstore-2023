@@ -107,8 +107,7 @@ bool convert(const std::string &s) {
   if (s.size() > 13)
     return false;
   int dotpos = -1;
-  if(s[0] == '.' && s.size() == 1) 
-    return false;
+  if(s[0] == '.')return false;
   for (int i = 0; i < s.size(); ++i)
     if (s[i] == '.')
       if (~dotpos)
@@ -207,7 +206,7 @@ void modify_book_step(int &id, book &nw, book &past, const std::string &s1) {
     string s = s1.substr(6);
     delete_book(past, id);
     strcpy(nw.ISBN, s.c_str());
-    add_book(nw, getkey(nw.Keywords));
+    id = add_book(nw, getkey(nw.Keywords));
     past = nw;
   } break;
   case 'n': {
