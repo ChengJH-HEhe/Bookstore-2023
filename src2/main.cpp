@@ -22,25 +22,29 @@ bool onlySpaces(const std::string &str) {
   return true;
 }
 
-void show(std::istringstream &stream, std::string& s1, int pri) {
+void show(std::istringstream &stream, std::string &s1, int pri) {
   std::string s[10];
   int sz = 0;
-  while(sz <= 5 && stream>>s[sz++]);
+  while (sz <= 5 && stream >> s[sz++])
+    ;
   --sz;
-  if(sz>2)return invalid();
+  if (sz > 2)
+    return invalid();
   if (sz == 0) {
-    Books_system::show(s1[1], "", pri);// all
+    Books_system::show(s1[1], "", pri); // all
   } else if (s[0] == "finance") {
     if (pri != 7) {
-      invalid();    
+      invalid();
       return;
     }
-    Log_system::read((sz>1?s[1]:""), 's', 7);// count
+    Log_system::read((sz > 1 ? s[1] : ""), 's', 7); // count
   } else {
-    if(!pri || sz != 1) return invalid();
+    if (!pri || sz != 1)
+      return invalid();
     static string str[4] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\""};
     s1 = s[0];
-    if(s[0].size()<=6) return invalid();
+    if (s[0].size() <= 6)
+      return invalid();
     switch (s[0][1]) {
     case 'I': {
       if (s1.size() <= 6 || s1.substr(0, 6) != str[0]) {
@@ -79,23 +83,45 @@ void show(std::istringstream &stream, std::string& s1, int pri) {
         s.pop_back();
         if (s.find('|') != s.npos) {
           return invalid();
-          } else {
+        } else {
           Books_system::show('k', s, pri);
         }
       }
     } break;
     default: {
-      return invalid();    
+      return invalid();
     }
     }
   }
 }
+
+bool check(std::string a, std::string b) {
+  if (b == "buy" || b == "select")
+    return true;
+  if (b == "show") {
+    
+    return true;
+  } else if (b == "modify") {
+    std::istringstream str(a);
+    std::string target;
+    str >> target;
+    while (str >> target) {
+      std::regex pattern(
+          R"(-ISBN=[^\s]|-name="[^"\s]"|-author="[^"\s]"|-keyword="[^"\s]"|-price=\d+(\.\d+))");
+      if (std::regex_match(target, pattern))
+        return true;
+      else
+        return false;
+    }
+  }
+  return false;
+}
+
 int main(int argc, char *argv[]) {
   clock_t start, end;
   start = clock(); // 开始时间
   // if(argc) freopen(argv[1],"r",stdin);
   // freopen("test.out","w",stdout);
-
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
@@ -120,9 +146,14 @@ int main(int argc, char *argv[]) {
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")
       Accounts_system::read(stream, s1[0], pri);
-    else if (s1 == "buy" || s1 == "select" || s1 == "modify" || s1 == "import")
+    else if (s1 == "buy" || s1 == "select" || s1 == "modify" ||
+             s1 == "import") {
+      if (!check(s, s1)) {
+        invalid();
+        continue;
+      }
       Books_system::read(stream, s1[0], pri);
-    else if (s1 == "report") {
+    } else if (s1 == "report") {
       if (pri != 7) {
         invalid();
         continue;
@@ -130,10 +161,13 @@ int main(int argc, char *argv[]) {
       string ss = s1;
       stream >> s1;
       Log_system::read(s1, ss[0]);
-    } else 
-    if (s1 == "show")
+    } else if (s1 == "show") {
+      if (!check(s, s1)) {
+        invalid();
+        continue;
+      }
       show(stream, s1, pri);
-    else {
+    } else {
       if (s == "log")
         Log_system::Log(stream, pri);
       else {

@@ -321,9 +321,10 @@ void delete_book(book a, int id) {
 void read(std::istringstream &stream, char c1, int pri) {
   string s[10];
   int sz = 0;
-  while (sz<=5 && stream >> s[sz++])
+  while (sz<=6 && stream >> s[sz++])
     ;
   --sz;
+  if(sz > 5) return invalid();
   switch (c1) {
   case 'b': {
     if (pri < 1)
