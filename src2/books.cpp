@@ -354,6 +354,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     }
   } break;
   case 's': {
+    assert(0);
     if (pri < 3 || sz != 1 || !books::pd_info(s[0], "ISBN"))
       return invalid();
     int id = bookMap.find(s[0].c_str());
@@ -363,6 +364,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     Accounts_system::stack::select(id);
   } break;
   case 'm': {
+    assert(0);
     if (pri < 3 || !sz)
       return invalid();
     int id = Accounts_system::stack::back().book;
@@ -378,11 +380,8 @@ void read(std::istringstream &stream, char c1, int pri) {
     for (int i = 0; i < sz; ++i)
       if (!pd_book_step(id, nw, s[i]))
         return invalid();
-    // assert(0);
     for (int i = 0; i < sz; ++i) {
-      // std::cout<<i<<std::endl;
       modify_book_step(id, nw, nw2, s[i]);
-      // std::cout<<i<<std::endl;
     }
     if (!strcmp(nw2.ISBN, nw.ISBN))
       modify_book(id, nw2, nw, 0);
