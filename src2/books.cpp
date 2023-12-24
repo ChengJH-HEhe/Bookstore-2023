@@ -328,16 +328,6 @@ void read(std::istringstream &stream, char c1, int pri) {
   while (sz<=4 && stream >> s[sz++])
     ;
   --sz;
-  /*
-  4个 char*->int
-  ISBN name author keywords
-  buy
-  s1 == "buy" 1 buy [ISBN] [Quantity]
-  s1 == "select" 3 select [ISBN]
-  s1 == "modify" 3 modify (-ISBN=[ISBN] | -name="[BookName]" |
-  -author="[Author]" | -keyword="[Keyword]" | -price=[Price])+ s1 == "import" 3
-  import [Quantity] [TotalCost]
-  */
   switch (c1) {
   case 'b': {
     if (pri < 1)
@@ -352,12 +342,9 @@ void read(std::istringstream &stream, char c1, int pri) {
         else
           num = num * 10 + (*i - '0');
       int id = bookMap.find(s[0].c_str());
-      // std::cerr<<id<<std::endl;
       if (id == -1)
         return invalid();
-
       books::book nw = books::find_book(id);
-      // std::cerr<<nw.Quantity<<" "<<s[0]<<" "<<nw.ISBN<<" "<<id<<std::endl;
       if (nw.Quantity < num || num == 0)
         return invalid();
       nw.Quantity -= num;
@@ -367,7 +354,6 @@ void read(std::istringstream &stream, char c1, int pri) {
     }
   } break;
   case 's': {
-    //////////////////////////////std::cout<< pri << std::endl; 忘传pri
     if (pri < 3 || sz != 1 || !books::pd_info(s[0], "ISBN"))
       return invalid();
     int id = bookMap.find(s[0].c_str());
@@ -377,7 +363,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     Accounts_system::stack::select(id);
   } break;
   case 'm': {
-    if (pri < 3)
+    if (pri < 3 || !sz)
       return invalid();
     int id = Accounts_system::stack::back().book;
     if (!id)
