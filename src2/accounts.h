@@ -27,8 +27,6 @@ struct Account {
   }
 }; // Add a semicolon here
 
-
-
 int Find_id(const char *s);
 void Find_accounts(Account&, int id);
 void modify_account(int id, Account now);

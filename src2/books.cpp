@@ -107,7 +107,7 @@ bool convert(const std::string &s) {
   if (s.size() > 13)
     return false;
   int dotpos = -1;
-  if(s[0] == '.')return false;
+  if(s[0] == '.' || s.back() == '.')return false;
   for (int i = 0; i < s.size(); ++i)
     if (s[i] == '.')
       if (~dotpos)
