@@ -117,6 +117,7 @@ bool convert(const std::string &s) {
         dotpos = i;
     else if (!isdigit(s[i]))
       return false;
+  if(round(stod(s)*100)/100 < 1e-6) return false;
   return true;
 }
 

@@ -94,7 +94,7 @@ int Find_id(const char *s) {
 }
 void Find_accounts(Account &nw, int id) {
   account.open("account");
-  assert(account.is_open());
+  //assert(account.is_open());
   account.seekg((id - 1) * sizeof(Account));
   account.read(reinterpret_cast<char *>(&nw), sizeof(Account));
   account.close();
