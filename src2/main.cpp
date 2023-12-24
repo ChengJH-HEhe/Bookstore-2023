@@ -106,7 +106,7 @@ bool check(std::string a, std::string b) {
     str >> target;
     while (str >> target) {
       std::regex pattern(
-          R"(-ISBN=[^\s]|-name="[^"\s]"|-author="[^"\s]"|-keyword="[^"\s]"|-price=\d+(\.\d+))");
+          R"(-ISBN=[^\s]{1,20}|-name="[^"\s]{1,60}"|-author="[^"\s]{1,60}"|-keyword="[^"\s]{1,60}"|-price=\d+(\.\d+))");
       if (std::regex_match(target, pattern))
         return true;
       else
@@ -147,10 +147,10 @@ int main(int argc, char *argv[]) {
       Accounts_system::read(stream, s1[0], pri);
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" ||
              s1 == "import") {
-      // if (!check(s, s1)) {
-      //   invalid();
-      //   continue;
-      // }
+      if (!check(s, s1)) {
+        invalid();
+        continue;
+      }
       Books_system::read(stream, s1[0], pri);
     } else if (s1 == "report") {
       if (pri != 7) {
