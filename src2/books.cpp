@@ -92,6 +92,7 @@ long long pd_info(string s, string tp) {
     return true;
   } else if (tp == "Quantity") {
     long long num = 0;
+    if(s.size() > 10) return false;
     for (auto i = s.begin(); i != s.end(); ++i)
       if (!isdigit(*i) || num > INT_MAX)
         return -1;
@@ -337,6 +338,7 @@ void read(std::istringstream &stream, char c1, int pri) {
       return invalid();
     } else {
       long long num = 0;
+      if(s[1].size() > 10) return invalid();
       for (auto i = s[1].begin(); i != s[1].end(); ++i)
         if (!isdigit(*i) || num > INT_MAX)
           return invalid();
