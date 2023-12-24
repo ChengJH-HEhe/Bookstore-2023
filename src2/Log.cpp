@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <fstream>
 #include <math.h>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -61,7 +62,9 @@ void read(std::istringstream &stream, char c, int pri) {
   }
 }
 
-void Log() {}
+void Log(std::istringstream& stream, int pri) {
+  if(pri != 7) return invalid();
+}
 
 void Init() {
   log.open("log");

@@ -7,7 +7,7 @@ namespace Log_system {
   void add(double);
   void read(std::istringstream &stream, char c = '\0', int pri = 0);
   void Init();
-  void Log();
+  void Log(std::istringstream&, int);
   void end();
 }
 #endif

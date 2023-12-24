@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ostream>
 #include <regex>
+#include <sstream>
 #include <variant>
 
 // Include the <sstream> header for std::istringstream
@@ -19,6 +20,68 @@ bool onlySpaces(const std::string &str) {
     }
   }
   return true;
+}
+
+void show(std::istringstream &stream,std::string s1, int pri) {
+  std::string ss;
+  if (!(stream >> s1))
+    Books_system::show(ss[1], "", pri);
+  else if (s1 == "finance") {
+    if (pri != 7) {
+      invalid();    
+      return;
+    }
+    Log_system::read(stream, 's', 7);
+  } else {
+    static string str[4] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\""};
+    switch (s1[1]) {
+    case 'I': {
+      if (s1.size() <= 6 || s1.substr(0, 6) != str[0]) {
+        invalid();
+        return;
+      } else {
+        string s = s1.substr(6);
+        Books_system::show('I', s, pri);
+      }
+    } break;
+    case 'n': {
+      if (s1.size() <= 8 || s1.substr(0, 7) != str[1] || s1.back() != '\"') {
+        invalid();
+      } else {
+        string s = s1.substr(7);
+        s.pop_back();
+        Books_system::show('n', s, pri);
+      }
+    } break;
+    case 'a': {
+      if (s1.size() <= 10 || s1.substr(0, 9) != str[2] || s1.back() != '\"') {
+        invalid();
+        return;
+      } else {
+        string s = s1.substr(9);
+        s.pop_back();
+        Books_system::show('a', s, pri);
+      }
+    } break;
+    case 'k': {
+      if (s1.size() <= 11 || s1.substr(0, 10) != str[3] || s1.back() != '\"') {
+        invalid();
+        return;
+      } else {
+        string s = s1.substr(10);
+        s.pop_back();
+        if (s.find('|') != s.npos) {
+          return invalid();
+          } else {
+          Books_system::show('k', s, pri);
+        }
+      }
+    } break;
+    default: {
+      invalid();    
+    }
+    }
+  }
 }
 int main(int argc, char *argv[]) {
   clock_t start, end;
@@ -38,8 +101,8 @@ int main(int argc, char *argv[]) {
     }
     std::istringstream stream(s);
     std::string s1;
-    stream>>s1;
-    //if(!(stream >> s1))continue;
+    if (!(stream >> s1))
+      continue;
     if (s1 == "quit" || s1 == "exit") {
       if (stream >> s1) {
         invalid();
@@ -63,81 +126,14 @@ int main(int argc, char *argv[]) {
         continue;
       }
       Log_system::read(stream, ss[0]);
-    } else if (s1 == "show") {
-      std::string ss = s1;
-      if (!(stream >> s1))
-        Books_system::show(ss[1], "", pri);
-      else 
-      if (s1 == "finance") {
-        if (pri != 7) {
-          invalid();
-          continue;
-        }
-        Log_system::read(stream, 's', 7);
-      } else {
-        static string str[4] = {"-ISBN=", "-name=\"", "-author=\"",
-                                "-keyword=\""};
-        switch (s1[1]) {
-        case 'I': {
-          if (s1.size() <= 6 || s1.substr(0, 6) != str[0]) {
-            invalid();
-            continue;
-          } else {
-            string s = s1.substr(6);
-            Books_system::show('I', s, pri);
-          }
-        } break;
-        case 'n': {
-          if (s1.size() <= 8 || s1.substr(0, 7) != str[1] ||
-              s1.back() != '\"') {
-            invalid();
-            continue;
-          } else {
-            string s = s1.substr(7);
-            s.pop_back();
-            Books_system::show('n', s, pri);
-          }
-        } break;
-        case 'a': {
-          if (s1.size() <= 10 || s1.substr(0, 9) != str[2] ||
-              s1.back() != '\"') {
-            invalid();
-            continue;
-          } else {
-            string s = s1.substr(9);
-            s.pop_back();
-            Books_system::show('a', s, pri);
-          }
-        } break;
-        case 'k': {
-          if (s1.size() <= 11 || s1.substr(0, 10) != str[3] ||
-              s1.back() != '\"') {
-            invalid();
-            continue;
-          } else {
-            string s = s1.substr(10);
-            s.pop_back();
-            if (s.find('|') != s.npos) {
-              invalid();
-              continue;
-            } else {
-              Books_system::show('k', s, pri);
-            }
-          }
-        } break;
-        default: {
-          invalid();
-          continue;
-        }
-        }
+    } else if (s1 == "show")
+      show(stream, s1, pri);
+    else {
+      if (s == "log")
+        Log_system::Log(stream, pri);
+      else if (s.size()) {
+        invalid();
       }
-    } else if (s == "log") {
-      if (pri != 7)
-        {invalid();continue;}
-      else
-        Log_system::Log();
-    } else if (s.size()) {
-      invalid();
     }
   }
 retu:;
