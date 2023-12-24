@@ -229,10 +229,11 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     if (su_pri != 7 || !pd(s[0]))
       return invalid();
     int id = Find_id(s[0].c_str());
+    if (id == -1)
+      return invalid();
     Account nw;
     Find_accounts(nw, id);
-    if (id == -1 || nw.sta)
-      return invalid();
+    if(nw.sta) return invalid();
     deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {
