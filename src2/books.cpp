@@ -464,7 +464,7 @@ void show(char s, string name, int pri) {
     authorMap.multifind(st, name.c_str());
   } break;
   case 'k': {
-    if(!books::pd_info(name,"key")|| books::getkey(name).size() != 1)
+    if(!books::pd_info(name,"key"))
       return invalid();
     keywordMap.multifind(st, name.c_str());
   } break;
