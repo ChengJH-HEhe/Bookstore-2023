@@ -36,10 +36,6 @@ int main(int argc, char *argv[]) {
       invalid();
       continue;
     }
-    // std::cerr<<++a<<" ";
-    // std::cerr<<pri<<std::endl;
-    //  getpri
-    //  strtoken
     std::istringstream stream(s);
     std::string s1;
     stream >> s1;
@@ -48,6 +44,7 @@ int main(int argc, char *argv[]) {
         invalid();
         continue;
       }
+      goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")
       Accounts_system::read(stream, s1[0], pri);
@@ -131,7 +128,6 @@ int main(int argc, char *argv[]) {
     } else if (s.size()) {
       invalid();
     }
-    return3:;
   }
 retu:;
   Accounts_system::stack::select(0);
