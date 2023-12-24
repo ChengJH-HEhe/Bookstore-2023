@@ -403,11 +403,11 @@ void read(std::istringstream &stream, char c1, int pri) {
   } break;
   case 'i': {
     // import [Quantity] [TotalCost]
-    if (sz != 2) {
+    if (sz != 2 || pri < 3) {
       return invalid();
     } else {
       long long num = books::pd_info(s[0], "Quantity");
-      if (num < 0 || !books::convert(s[1]))
+      if (num <= 0 || !books::convert(s[1]))
         return invalid();
       double TotalCost = std::stod(s[1]);
       int id = Accounts_system::stack::back().book;
