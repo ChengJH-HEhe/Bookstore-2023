@@ -99,7 +99,6 @@ bool check(std::string a, std::string b) {
   if (b == "buy" || b == "select")
     return true;
   if (b == "show") {
-    
     return true;
   } else if (b == "modify") {
     std::istringstream str(a);
@@ -114,7 +113,7 @@ bool check(std::string a, std::string b) {
         return false;
     }
   }
-  return false;
+  return true;
 }
 
 int main(int argc, char *argv[]) {
