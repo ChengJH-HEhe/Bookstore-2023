@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ostream>
 #include <variant>
+#include <regex>
 
 // Include the <sstream> header for std::istringstream
 #include "Log.h"

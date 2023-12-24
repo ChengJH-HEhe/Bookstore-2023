@@ -115,7 +115,8 @@ void modify_account(int id, Account now) {
   account.open("account");
   account.seekp((id - 1) * sizeof(Account));
   account.write(reinterpret_cast<char *>(&now), sizeof(Account));
-  //std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<" "<<now.sta<<" "<<"数字？"<<std::endl;
+  // std::cerr<< id <<" "<< now.Password<<" "<<now.UserID<<" "<<now.Username<<"
+  // "<<now.sta<<" "<<"数字？"<<std::endl;
   account.close();
 }
 
@@ -153,7 +154,8 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   switch (tp) {
   case 's': {
     // 保证@是合法 控制符
-    if(sz > 2 || sz < 1) return invalid();
+    if (sz > 2 || sz < 1)
+      return invalid();
     int id = Find_id(s[0].c_str());
     if (id == -1)
       return invalid();
@@ -168,20 +170,15 @@ void read(std::istringstream &stream, char tp, int su_pri) {
         candidate.sta++;
     } else {
       if (strcmp(candidate.Password, s[1].c_str()))
-        return 
-               invalid(); // std::cerr<<candidate.Password << " "
-                          // <<s[1].c_str(), invalid();
+        return invalid();
       else
         candidate.sta++;
     }
-    // std::cout<<1;
     stack::vector_st.push_back(stack::mystack(0, id, candidate.Pri));
     modify_account(id, candidate);
   } break;
   case 'r': {
     if (sz != 3 || !pd(s[0]) || !pd(s[1]) || !pd_loose(s[2]))
-      return invalid();
-    if (~Find_id(s[0].c_str()))
       return invalid();
     registerUser(Account(const_cast<char *>(s[0].c_str()),
                          const_cast<char *>(s[1].c_str()),
@@ -192,7 +189,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   case 'p': {
     if (sz != 2 && sz != 3)
       return invalid();
-    if(su_pri < 1)
+    if (su_pri < 1)
       return invalid();
     for (int i = 0; i < sz; ++i)
       if (!pd(s[i]))
@@ -202,7 +199,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
       return invalid();
     Account now;
     Find_accounts(now, id);
-    if (su_pri < 1 || (sz == 3 && strcmp(now.Password, s[1].c_str())) ||
+    if ((sz == 3 && strcmp(now.Password, s[1].c_str())) ||
         (sz == 2 && su_pri != 7))
       return invalid();
     if (sz == 3)
@@ -213,7 +210,8 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   } break;
   case 'u': {
     // std::cout<<sz<<std::endl;
-    if(su_pri < 3) return invalid();
+    if (su_pri < 3)
+      return invalid();
     if (sz != 4 || !pd(s[0]) || !pd(s[1]) || !pd_loose(s[3]))
       return invalid();
     if (s[2] != "7" && s[2] != "3" && s[2] != "1" && s[2] != "0")
@@ -226,7 +224,8 @@ void read(std::istringstream &stream, char tp, int su_pri) {
                  s[2][0] - '0');
   } break;
   case 'd': {
-    if(sz>1) return invalid();
+    if (sz > 1)
+      return invalid();
     if (su_pri != 7 || !pd(s[0]))
       return invalid();
     int id = Find_id(s[0].c_str());
@@ -237,7 +236,8 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {
-    if(sz || !su_pri)return invalid();
+    if (sz || !su_pri)
+      return invalid();
     logout();
   } break;
   default: {
