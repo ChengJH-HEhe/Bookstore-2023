@@ -126,12 +126,10 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
       return false;
     else {
       string s = s1.substr(6);
-      if (!strcmp(nw.ISBN, s.c_str()) || !pd_info(s, "ISBN"))
+      if (!pd_info(s, "ISBN") || !strcmp(nw.ISBN, s.c_str()))
         return false;
       if (~find_id(s.c_str()))
         return false;
-      // delete_book(id, nw);
-      // strcpy(nw.ISBN, s.c_str());
       return true;
     }
   } break;
@@ -336,12 +334,11 @@ void read(std::istringstream &stream, char c1, int pri) {
   */
   switch (c1) {
   case 'b': {
-    if (!pri)
+    if (pri < 1)
       return invalid();
     if (sz != 2 || !books::pd_info(s[0], "ISBN")) {
       return invalid();
     } else {
-
       long long num = 0;
       for (auto i = s[1].begin(); i != s[1].end(); ++i)
         if (!isdigit(*i) || num > INT_MAX)
@@ -374,6 +371,7 @@ void read(std::istringstream &stream, char c1, int pri) {
     Accounts_system::stack::select(id);
   } break;
   case 'm': {
+    if(pri < 3 ) return invalid();
     int id = Accounts_system::stack::back().book;
     if (!id)
       return invalid();

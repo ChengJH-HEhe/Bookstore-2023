@@ -192,6 +192,8 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   case 'p': {
     if (sz != 2 && sz != 3)
       return invalid();
+    if(su_pri < 1)
+      return invalid();
     for (int i = 0; i < sz; ++i)
       if (!pd(s[i]))
         return invalid();
@@ -211,6 +213,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   } break;
   case 'u': {
     // std::cout<<sz<<std::endl;
+    if(su_pri < 3) return invalid();
     if (sz != 4 || !pd(s[0]) || !pd(s[1]) || !pd_loose(s[3]))
       return invalid();
     if (s[2] != "7" && s[2] != "3" && s[2] != "1" && s[2] != "0")
@@ -234,7 +237,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {
-    if(sz)return invalid();
+    if(sz || !su_pri)return invalid();
     logout();
   } break;
   default: {
