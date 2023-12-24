@@ -94,11 +94,11 @@ long long pd_info(string s, string tp) {
     long long num = 0;
     if(s.size() > 10) return false;
     for (auto i = s.begin(); i != s.end(); ++i)
-      if (!isdigit(*i) || num > INT_MAX)
+      if (!isdigit(*i))
         return -1;
       else
-        num = num * 10 + (*i - '0');
-    if (s[0] == '0')
+        num = num * 10 + (*i - '0'); 
+    if (s[0] == '0'|| num > INT_MAX)
       num = 0;
     return num;
   } else
@@ -341,10 +341,11 @@ void read(std::istringstream &stream, char c1, int pri) {
       long long num = 0;
       if(s[1].size() > 10) return invalid();
       for (auto i = s[1].begin(); i != s[1].end(); ++i)
-        if (!isdigit(*i) || num > INT_MAX)
+        if (!isdigit(*i))
           return invalid();
         else
-          num = num * 10 + (*i - '0');
+          num = num * 10 + (*i - '0'); 
+      if(num > INT_MAX) return invalid();
       int id = bookMap.find(s[0].c_str());
       if (id == -1)
         return invalid();
