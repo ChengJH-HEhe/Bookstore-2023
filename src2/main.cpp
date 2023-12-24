@@ -30,7 +30,6 @@ int main(int argc, char * argv[]) {
   Log_system::Init();
   while (getline(cin, s)) {
     static int a = 0;
-    
     int pri = Accounts_system::get_pri();
     //std::cerr<<++a<<" ";
     //std::cerr<<pri<<std::endl;
@@ -40,8 +39,8 @@ int main(int argc, char * argv[]) {
     std::string s1;
     stream >> s1;
     if (s1 == "quit" || s1 == "exit") {
-      stream>>s1;
-      if(s1.size() != 0) return invalid(),0;
+      // stream >> s1;
+      // if(s1.size() != 0) return invalid(),0;
       goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")
