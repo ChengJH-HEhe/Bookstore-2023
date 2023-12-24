@@ -17,7 +17,7 @@ namespace books {
     book() = default;
     char ISBN[21]="\0", BookName[61]="\0", Author[61]="\0";
     char Keywords[61] = "\0";
-    int Quantity = 0;
+    long long Quantity = 0;
     double Price = 0.0;
     double TotalCost = 0.0;
     book(const char *a){if(a)strcpy(ISBN,a);}

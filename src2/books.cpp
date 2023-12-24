@@ -107,6 +107,8 @@ bool convert(const std::string &s) {
   if (s.size() > 13)
     return false;
   int dotpos = -1;
+  if(s[0] == '.' && s.size() == 1) 
+    return false;
   for (int i = 0; i < s.size(); ++i)
     if (s[i] == '.')
       if (~dotpos)
@@ -354,7 +356,6 @@ void read(std::istringstream &stream, char c1, int pri) {
     }
   } break;
   case 's': {
-    assert(0);
     if (pri < 3 || sz != 1 || !books::pd_info(s[0], "ISBN"))
       return invalid();
     int id = bookMap.find(s[0].c_str());
@@ -364,7 +365,6 @@ void read(std::istringstream &stream, char c1, int pri) {
     Accounts_system::stack::select(id);
   } break;
   case 'm': {
-    assert(0);
     if (pri < 3 || !sz)
       return invalid();
     int id = Accounts_system::stack::back().book;
