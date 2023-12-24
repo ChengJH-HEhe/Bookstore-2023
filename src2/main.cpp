@@ -22,7 +22,7 @@ bool onlySpaces(const std::string &str) {
   return true;
 }
 
-void show(std::istringstream &stream,std::string s1, int pri) {
+void show(std::istringstream &stream, std::string& s1, int pri) {
   std::string s[10];
   int sz = 0;
   while(sz <= 5 && stream>>s[sz++]);

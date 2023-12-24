@@ -18,7 +18,6 @@ void add(double money) {
   } else {
     q = std::make_pair(money, 0.0);
   }
-  //if(history.size())std::cerr<<history.back().first<<" "<<history.back().second<<std::endl;
   if (history.empty()) {
     history.push_back(q);
   } else {

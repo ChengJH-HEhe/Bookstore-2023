@@ -47,7 +47,6 @@ void end() {
 namespace books {
 
 std::vector<std::string> getkey(string nw) {
-  std::unordered_map<std::string, bool> mp;
   std::vector<std::string> v;
   while (nw.find('|') != nw.npos) {
     int x = nw.find('|');
@@ -56,7 +55,7 @@ std::vector<std::string> getkey(string nw) {
       return v;
     } else {
       v.push_back(nw.substr(0, x));
-      if (mp.find(v.back()) != mp.end() || !pd_info(v.back(), "key")) {
+      if (!pd_info(v.back(), "key")) {
         v.clear();
         return v;
       }
@@ -64,7 +63,7 @@ std::vector<std::string> getkey(string nw) {
     }
   }
   if (nw.size()) {
-    if (!pd_info(nw, "key") || mp.find(nw) != mp.end()) {
+    if (!pd_info(nw, "key") ) {
       v.clear();
       return v;
     } else {
@@ -98,9 +97,10 @@ long long pd_info(string s, string tp) {
         return -1;
       else
         num = num * 10 + (*i - '0'); 
-    if (s[0] == '0'|| num > INT_MAX)
-      num = 0;
-    return num;
+    if( num > INT_MAX)
+      num = -1;
+    if (s[0] == '0') num = 0;
+      return num;
   } else
     return 0;
 }
@@ -127,10 +127,9 @@ void modify_key(int id, string past, string nw, char *ISBN) {
   for (auto ai : b)
     keywordMap.ins(const_cast<char *>(ai.c_str()), id);
 }
-bool pd_book_step(int &id, book &nw, std::string s1) {
-  static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
+bool pd_book_step(int &id, book &nw,const std::string& s1) {
+  string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
                          "-price="};
-  if(s1.size() <= 6) return false;
   switch (s1[1]) {
   case 'I': {
     // substr第二个参数是长度
@@ -173,7 +172,6 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
       return false;
     else {
       std::unordered_map<std::string, bool> map;
-      map.clear();
       string s = s1.substr(10);
       s.pop_back();
       std::vector<std::string> key = getkey(s);
@@ -201,8 +199,9 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
   }
 }
 void modify_book_step(int &id, book &nw, book &past, const std::string &s1) {
-  static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
+  string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
                          "-price="};
+  
   switch (s1[1]) {
   case 'I': {
     string s = s1.substr(6);
@@ -247,11 +246,7 @@ std::ostream &operator<<(std::ostream &out, const book &nw) {
 }
 int find_id(const char *s) {
   // User ID
-  int id = bookMap.find(s);
-  if (~id) {
-    return id;
-  }
-  return -1;
+  return bookMap.find(s);
 }
 book find_book(int id) {
   // 保证id合法
@@ -262,15 +257,15 @@ book find_book(int id) {
   Book.close();
   return nw;
 }
-string find_book_ISBN(int id) {
-  // 保证id合法
-  char nw[21];
-  Book.open("Book");
-  Book.seekg((id - 1) * sizeof(book));
-  Book.read(reinterpret_cast<char *>(&nw), sizeof(nw));
-  Book.close();
-  return string(nw);
-}
+// string find_book_ISBN(int id) {
+//   // 保证id合法
+//   char nw[21];
+//   Book.open("Book");
+//   Book.seekg((id - 1) * sizeof(book));
+//   Book.read(reinterpret_cast<char *>(&nw), sizeof(nw));
+//   Book.close();
+//   return string(nw);
+// }
 
 void modify_book(int id, book &past, book &nw, int tp = 0) {
   if (tp == 0) {
@@ -311,9 +306,7 @@ int add_book(book a, const std::vector<std::string> &key) {
 }
 void delete_book(book a, int id) {
   queue.getback(id);
-  // std::cerr << id << " " << a.ISBN << std::endl;
   std::vector<std::string> key = getkey(a.Keywords);
-  // assert(find_id(a.ISBN) == -1);
   bookMap.remove(bookMap.getinfo(a.ISBN, id));
   if (a.BookName[0] != '\0')
     nameMap.remove(nameMap.getinfo(a.BookName, id));
@@ -326,7 +319,7 @@ void delete_book(book a, int id) {
 } // namespace books
 
 void read(std::istringstream &stream, char c1, int pri) {
-  string s[10] = {"@", "@", "@", "@", "@"};
+  string s[10];
   int sz = 0;
   while (sz<=5 && stream >> s[sz++])
     ;
@@ -354,6 +347,7 @@ void read(std::istringstream &stream, char c1, int pri) {
       books::book nw = books::find_book(id);
       if (nw.Quantity < num || num == 0)
         return invalid();
+
       nw.Quantity -= num;
       modify_book(id, nw, nw);
       Log_system::add(num * nw.Price);
@@ -418,7 +412,8 @@ void read(std::istringstream &stream, char c1, int pri) {
   }
 }
 void show(char s, string name, int pri) {
-  std::vector<int> st;
+  static std::vector<int> st;
+  st.clear();
   // h I N A K
   // 遍历map输出
   if (pri < 1)
