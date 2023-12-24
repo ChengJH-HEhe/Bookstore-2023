@@ -464,8 +464,10 @@ void show(char s, string name, int pri) {
     authorMap.multifind(st, name.c_str());
   } break;
   case 'k': {
+    std::cerr<<235<<std::endl;
     if(!books::pd_info(name,"key"))
       return invalid();
+    std::cerr<<236<<std::endl;
     keywordMap.multifind(st, name.c_str());
   } break;
   }

@@ -73,7 +73,7 @@ int main(int argc, char * argv[]) {
         switch (s1[1]) {
         case 'I': {
           if (s1.size() <= 6 || s1.substr(0, 6) != str[0])
-            invalid();
+            goto retur;
           else {
             string s = s1.substr(6);
             Books_system::show('I', s, pri);
@@ -81,7 +81,7 @@ int main(int argc, char * argv[]) {
         } break;
         case 'n': {
           if (s1.size() <= 8 || s1.substr(0, 7) != str[1] || s1.back() != '\"')
-            invalid();
+            goto retur;
           else {
             string s = s1.substr(7); s.pop_back();
             Books_system::show('n', s, pri);
@@ -89,7 +89,7 @@ int main(int argc, char * argv[]) {
         } break;
         case 'a': {
           if (s1.size() <= 10 || s1.substr(0, 9) != str[2] || s1.back() != '\"')
-            invalid();
+            goto retur;
           else {
             string s = s1.substr(9);s.pop_back();
             Books_system::show('a', s, pri);
@@ -97,20 +97,22 @@ int main(int argc, char * argv[]) {
         } break;
         case 'k': {
           if (s1.size() <= 11 || s1.substr(0, 10) != str[3] || s1.back() != '\"')
-            invalid();
+            goto retur;
           else {
             string s = s1.substr(10);s.pop_back();
             if (s.find('|') != s.npos)
-              invalid();
+              goto retur;
             else
               Books_system::show('k', s, pri);
           }
         } break;
         default: {
-          invalid();
+          goto retur;
         }
         }
-        if(stream>>s1) invalid();
+        if(stream>>s1 && s1.size()) goto retur;
+        retur:;
+        invalid();
       }
     } else if(s == "log") {
       if(pri != 7) invalid();
