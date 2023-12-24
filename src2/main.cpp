@@ -39,8 +39,8 @@ int main(int argc, char * argv[]) {
     std::string s1;
     stream >> s1;
     if (s1 == "quit" || s1 == "exit") {
-      // stream >> s1;
-      // if(s1.size() != 0) return invalid(),0;
+      if(stream >> s1) return invalid(),0;
+      // if(s1.size() != 0) 
       goto retu;
     } else if (s1 == "su" || s1 == "register" || s1 == "passwd" ||
                s1 == "useradd" || s1 == "delete" || s1 == "logout")

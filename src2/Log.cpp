@@ -34,6 +34,8 @@ void read(std::istringstream &stream, char c, int pri) {
   if (pri != 7)
     return invalid();
   if (c == 's') {
+    if(sz > 1) return invalid();
+    else if (!sz) return puts(""), void();
     long long num = history.size();
     if (sz == 1) {
       long long num1 = 0;
@@ -44,9 +46,7 @@ void read(std::istringstream &stream, char c, int pri) {
           num1 = num1 * 10 + (*i - '0');
       num = num1;
     }
-    if(!num) {
-      return puts(""),void();
-    } else if (num > history.size())
+    if (num > history.size())
       return invalid();
     else if (num == history.size()) {
       std::pair<double, double> q =

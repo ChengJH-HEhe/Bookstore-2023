@@ -200,7 +200,6 @@ void read(std::istringstream &stream, char tp, int su_pri) {
       return invalid();
     Account now;
     Find_accounts(now, id);
-    //std::cerr << id << " " << now.Password << " " << now.UserID << std::endl;
     if (su_pri < 1 || (sz == 3 && strcmp(now.Password, s[1].c_str())) ||
         (sz == 2 && su_pri != 7))
       return invalid();
