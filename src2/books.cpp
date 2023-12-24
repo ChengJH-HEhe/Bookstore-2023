@@ -130,6 +130,7 @@ void modify_key(int id, string past, string nw, char *ISBN) {
 bool pd_book_step(int &id, book &nw, std::string s1) {
   static string str[] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\"",
                          "-price="};
+  if(s1.size() <= 6) return false;
   switch (s1[1]) {
   case 'I': {
     // substr第二个参数是长度
@@ -344,7 +345,9 @@ void read(std::istringstream &stream, char c1, int pri) {
           return invalid();
         else
           num = num * 10 + (*i - '0'); 
+      if(s[1][0] == '0') num = 0;
       if(num > INT_MAX) return invalid();
+
       int id = bookMap.find(s[0].c_str());
       if (id == -1)
         return invalid();

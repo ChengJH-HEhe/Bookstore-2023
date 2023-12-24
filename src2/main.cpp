@@ -27,18 +27,20 @@ void show(std::istringstream &stream,std::string s1, int pri) {
   int sz = 0;
   while(sz <= 5 && stream>>s[sz++]);
   --sz;
+  if(sz>2)return invalid();
   if (sz == 0) {
-    Books_system::show(s1[1], "", pri);
+    Books_system::show(s1[1], "", pri);// all
   } else if (s[0] == "finance") {
     if (pri != 7) {
       invalid();    
       return;
     }
-    Log_system::read((sz>1?s[1]:""), 's', 7);
+    Log_system::read((sz>1?s[1]:""), 's', 7);// count
   } else {
     if(!pri || sz != 1) return invalid();
     static string str[4] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\""};
     s1 = s[0];
+    if(s[0].size()<=6) return invalid();
     switch (s[0][1]) {
     case 'I': {
       if (s1.size() <= 6 || s1.substr(0, 6) != str[0]) {
