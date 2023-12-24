@@ -6,9 +6,11 @@
 #include <algorithm>
 #include <cassert>
 #include <climits>
+#include <cmath>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <math.h>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -100,12 +102,18 @@ long long pd_info(string s, string tp) {
     return 0;
 }
 bool convert(const std::string &s) {
-  try {
-    std::stod(s);
-    return true;
-  } catch (const std::invalid_argument &) {
-    return false;
-  }
+  if (s.size() > 13)
+        return false;
+      int dotpos = -1;
+      for (int i = 0; i < s.size(); ++i)
+        if (s[i] == '.')
+          if (~dotpos)
+            return false;
+          else
+            dotpos = i;
+        else if (!isdigit(s[i]))
+          return false;
+      return true;
 }
 
 void modify_key(int id, string past, string nw, char *ISBN) {
@@ -179,18 +187,7 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
       return false;
     else {
       string s = s1.substr(7);
-      if (s.size() > 13)
-        return false;
-      int dotpos = -1;
-      for (int i = 0; i < s.size(); ++i)
-        if (s[i] == '.')
-          if (~dotpos)
-            return false;
-          else
-            dotpos = i;
-        else if (!isdigit(s[i]))
-          return false;
-      return true;
+      return convert(s);
     }
   } break;
   default: {
@@ -229,6 +226,7 @@ void modify_book_step(int &id, book &nw, book &past, const std::string &s1) {
   case 'p': {
     string s = s1.substr(7);
     double price = std::stod(s);
+    price = std::round(price*100)/100;
     nw.Price = price;
   } break;
   default: {
@@ -415,6 +413,7 @@ void read(std::istringstream &stream, char c1, int pri) {
       if (num <= 0 || !books::convert(s[1]))
         return invalid();
       double TotalCost = std::stod(s[1]);
+      TotalCost = round(TotalCost*100)/100;
       int id = Accounts_system::stack::back().book;
       if (!id || TotalCost < 1e-13)
         return invalid();
