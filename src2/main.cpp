@@ -23,18 +23,24 @@ bool onlySpaces(const std::string &str) {
 }
 
 void show(std::istringstream &stream,std::string s1, int pri) {
-  std::string ss;
-  if (!(stream >> s1))
-    Books_system::show(ss[1], "", pri);
-  else if (s1 == "finance") {
+  std::string s[5];
+  int sz = 0;
+  while(sz<=4 && stream>>s[sz++]);
+  --sz;
+  if(!(sz <= 2)) return invalid();
+  if (sz == 0) {
+    Books_system::show(s1[1], "", pri);
+  } else if (s[0] == "finance") {
     if (pri != 7) {
       invalid();    
       return;
     }
-    Log_system::read(stream, 's', 7);
+    Log_system::read((sz>1?s[1]:""), 's', 7);
   } else {
+    if(!pri || sz != 1) return invalid();
     static string str[4] = {"-ISBN=", "-name=\"", "-author=\"", "-keyword=\""};
-    switch (s1[1]) {
+    s1 = s[0];
+    switch (s[0][1]) {
     case 'I': {
       if (s1.size() <= 6 || s1.substr(0, 6) != str[0]) {
         invalid();
@@ -78,7 +84,7 @@ void show(std::istringstream &stream,std::string s1, int pri) {
       }
     } break;
     default: {
-      invalid();    
+      return invalid();    
     }
     }
   }
@@ -119,19 +125,16 @@ int main(int argc, char *argv[]) {
         invalid();
         continue;
       }
-      stream >> s1;
       string ss = s1;
-      if (stream >> s1) {
-        invalid();
-        continue;
-      }
-      Log_system::read(stream, ss[0]);
-    } else if (s1 == "show")
+      stream >> s1;
+      Log_system::read(s1, ss[0]);
+    } else 
+    if (s1 == "show")
       show(stream, s1, pri);
     else {
       if (s == "log")
         Log_system::Log(stream, pri);
-      else if (s.size()) {
+      else {
         invalid();
       }
     }

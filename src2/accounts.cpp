@@ -146,7 +146,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   using namespace Accounts;
   string s[5] = {"@", "@", "@", "@", "@"};
   int sz = 0;
-  while (stream >> s[sz++])
+  while (sz<=5 && stream >> s[sz++])
     ;
   --sz;
   // for(int i = 0; i < sz; ++i) std::cout<<s[i]<<" ";

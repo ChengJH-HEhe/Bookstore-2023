@@ -26,27 +26,21 @@ void add(double money) {
                                      q.second + history.back().second));
   }
 }
-void read(std::istringstream &stream, char c, int pri) {
-  std::string s[5];
-  int sz = 0;
-  while (stream >> s[sz++])
-    ;
-  --sz;
+void read(std::string s, char c, int pri) {
   if (pri != 7)
     return invalid();
   if (c == 's') {
     long long num = history.size();
-    if (sz == 1) {
+    if (s.size()) {
       long long num1 = 0;
-      for (auto i = s[0].begin(); i != s[0].end(); ++i)
+      for (auto i = s.begin(); i != s.end(); ++i)
         if (!isdigit(*i) || num1 > INT_MAX)
           return invalid();
         else
           num1 = num1 * 10 + (*i - '0');
       num = num1;
     }
-    if(sz > 1) return invalid();
-    else if (sz == 1 && !num) return puts(""), void();
+    if (s.size() == 1 && !num) return puts(""), void();
     else if (num > history.size())
       return invalid();
     else if (num == history.size()) {
