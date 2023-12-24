@@ -326,7 +326,7 @@ void delete_book(book a, int id) {
 } // namespace books
 
 void read(std::istringstream &stream, char c1, int pri) {
-  string s[5] = {"@", "@", "@", "@", "@"};
+  string s[10] = {"@", "@", "@", "@", "@"};
   int sz = 0;
   while (sz<=4 && stream >> s[sz++])
     ;

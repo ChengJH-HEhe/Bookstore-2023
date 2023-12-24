@@ -144,7 +144,7 @@ int get_pri() {
 
 void read(std::istringstream &stream, char tp, int su_pri) {
   using namespace Accounts;
-  string s[5] = {"@", "@", "@", "@", "@"};
+  string s[10] = {"@", "@", "@", "@", "@"};
   int sz = 0;
   while (sz<=4 && stream >> s[sz++])
     ;
