@@ -108,6 +108,7 @@ int main(int argc, char * argv[]) {
           invalid();
         }
         }
+        if(stream>>s1) invalid();
       }
     } else if(s == "log") {
       if(pri != 7) invalid();
