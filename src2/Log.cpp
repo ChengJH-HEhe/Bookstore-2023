@@ -33,11 +33,13 @@ void read(std::string s, char c, int pri) {
     long long num = history.size();
     if (s.size()) {
       long long num1 = 0;
+      if(s.size() > 10)return invalid();
       for (auto i = s.begin(); i != s.end(); ++i)
         if (!isdigit(*i) || num1 > INT_MAX)
           return invalid();
         else
           num1 = num1 * 10 + (*i - '0');
+      if(s[0] == '0') num1 = 0;
       num = num1;
     }
     if (s.size() == 1 && !num) return puts(""), void();

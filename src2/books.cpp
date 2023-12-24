@@ -133,7 +133,7 @@ bool pd_book_step(int &id, book &nw, std::string s1) {
                          "-price="};
   switch (s1[1]) {
   case 'I': {
-    // 第二个参数是长度
+    // substr第二个参数是长度
     if (s1.size() <= 6 || s1.substr(0, 6) != str[0])
       return false;
     else {
