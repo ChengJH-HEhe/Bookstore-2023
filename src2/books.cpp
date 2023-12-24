@@ -97,23 +97,25 @@ long long pd_info(string s, string tp) {
         return -1;
       else
         num = num * 10 + (*i - '0');
+    if (s[0] == '0')
+      num = 0;
     return num;
   } else
     return 0;
 }
 bool convert(const std::string &s) {
   if (s.size() > 13)
+    return false;
+  int dotpos = -1;
+  for (int i = 0; i < s.size(); ++i)
+    if (s[i] == '.')
+      if (~dotpos)
         return false;
-      int dotpos = -1;
-      for (int i = 0; i < s.size(); ++i)
-        if (s[i] == '.')
-          if (~dotpos)
-            return false;
-          else
-            dotpos = i;
-        else if (!isdigit(s[i]))
-          return false;
-      return true;
+      else
+        dotpos = i;
+    else if (!isdigit(s[i]))
+      return false;
+  return true;
 }
 
 void modify_key(int id, string past, string nw, char *ISBN) {
@@ -226,7 +228,7 @@ void modify_book_step(int &id, book &nw, book &past, const std::string &s1) {
   case 'p': {
     string s = s1.substr(7);
     double price = std::stod(s);
-    price = std::round(price*100)/100;
+    price = std::round(price * 100) / 100;
     nw.Price = price;
   } break;
   default: {
@@ -413,7 +415,7 @@ void read(std::istringstream &stream, char c1, int pri) {
       if (num <= 0 || !books::convert(s[1]))
         return invalid();
       double TotalCost = std::stod(s[1]);
-      TotalCost = round(TotalCost*100)/100;
+      TotalCost = round(TotalCost * 100) / 100;
       int id = Accounts_system::stack::back().book;
       if (!id || TotalCost < 1e-13)
         return invalid();
@@ -443,6 +445,8 @@ void show(char s, string name, int pri) {
     }
   } break;
   case 'I': {
+    if(!books::pd_info(name,"ISBN"))
+      return invalid();
     int id = bookMap.find(name.c_str());
     if (~id)
       std::cout << books::find_book(id);
@@ -450,12 +454,18 @@ void show(char s, string name, int pri) {
       std::cout << '\n';
   } break;
   case 'n': {
+    if(!books::pd_info(name,"name"))
+      return invalid();
     nameMap.multifind(st, name.c_str());
   } break;
   case 'a': {
+    if(!books::pd_info(name,"author"))
+      return invalid();
     authorMap.multifind(st, name.c_str());
   } break;
   case 'k': {
+    if(!books::pd_info(name,"key")|| books::getkey(name).size() != 1)
+      return invalid();
     keywordMap.multifind(st, name.c_str());
   } break;
   }
