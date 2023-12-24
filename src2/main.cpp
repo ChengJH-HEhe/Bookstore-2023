@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     }
     std::istringstream stream(s);
     std::string s1;
-    stream >> s1;
+    if(!(stream >> s1))continue;
     if (s1 == "quit" || s1 == "exit") {
       if (stream >> s1) {
         invalid();
@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
       Accounts_system::read(stream, s1[0], pri);
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" || s1 == "import")
       Books_system::read(stream, s1[0], pri);
-    // std::cout<<s<<std::endl;
     else if (s1 == "report") {
       if (pri != 7) {
         invalid();
@@ -58,13 +57,17 @@ int main(int argc, char *argv[]) {
       }
       stream >> s1;
       string ss = s1;
-      if(stream>>s1) {invalid();continue;}
+      if (stream >> s1) {
+        invalid();
+        continue;
+      }
       Log_system::read(stream, ss[0]);
     } else if (s1 == "show") {
       std::string ss = s1;
       if (!(stream >> s1))
         Books_system::show(ss[1], "", pri);
-      else if (s1 == "finance") {
+      else 
+      if (s1 == "finance") {
         if (pri != 7) {
           invalid();
           continue;
@@ -74,58 +77,66 @@ int main(int argc, char *argv[]) {
         static string str[4] = {"-ISBN=", "-name=\"", "-author=\"",
                                 "-keyword=\""};
         switch (s1[1]) {
-          case 'I': {
-            if (s1.size() <= 6 || s1.substr(0, 6) != str[0])
-              {invalid();continue;}
-            else {
-              string s = s1.substr(6);
-              Books_system::show('I', s, pri);
-            }
-          } break;
-          case 'n': {
-            if (s1.size() <= 8 || s1.substr(0, 7) != str[1] || s1.back() != '\"')
-              {invalid();continue;}
-            else {
-              string s = s1.substr(7);
-              s.pop_back();
-              Books_system::show('n', s, pri);
-            }
-          } break;
-          case 'a': {
-            if (s1.size() <= 10 || s1.substr(0, 9) != str[2] || s1.back() != '\"')
-              {invalid();continue;}
-            else {
-              string s = s1.substr(9);
-              s.pop_back();
-              Books_system::show('a', s, pri);
-            }
-          } break;
-          case 'k': {
-            if (s1.size() <= 11 || s1.substr(0, 10) != str[3] ||
-                s1.back() != '\"')
-              {invalid();continue;}
-            else {
-              string s = s1.substr(10);
-              s.pop_back();
-              if (s.find('|') != s.npos)
-                {invalid();continue;}
-              else
-                Books_system::show('k', s, pri);
-            }
-          } break;
-          default: {
-            {invalid();continue;}
+        case 'I': {
+          if (s1.size() <= 6 || s1.substr(0, 6) != str[0]) {
+            invalid();
+            continue;
+          } else {
+            string s = s1.substr(6);
+            Books_system::show('I', s, pri);
           }
+        } break;
+        case 'n': {
+          if (s1.size() <= 8 || s1.substr(0, 7) != str[1] ||
+              s1.back() != '\"') {
+            invalid();
+            continue;
+          } else {
+            string s = s1.substr(7);
+            s.pop_back();
+            Books_system::show('n', s, pri);
+          }
+        } break;
+        case 'a': {
+          if (s1.size() <= 10 || s1.substr(0, 9) != str[2] ||
+              s1.back() != '\"') {
+            invalid();
+            continue;
+          } else {
+            string s = s1.substr(9);
+            s.pop_back();
+            Books_system::show('a', s, pri);
+          }
+        } break;
+        case 'k': {
+          if (s1.size() <= 11 || s1.substr(0, 10) != str[3] ||
+              s1.back() != '\"') {
+            invalid();
+            continue;
+          } else {
+            string s = s1.substr(10);
+            s.pop_back();
+            if (s.find('|') != s.npos) {
+              invalid();
+              continue;
+            } else {
+              Books_system::show('k', s, pri);
+            }
+          }
+        } break;
+        default: {
+          invalid();
+          continue;
         }
-        if (stream >> s1 && s1.size())
-          {invalid();continue;}
+        }
       }
     } else if (s == "log") {
       if (pri != 7)
-        invalid();
+        {invalid();continue;}
       else
         Log_system::Log();
     } else if (s.size()) {
+
       invalid();
     }
   }
