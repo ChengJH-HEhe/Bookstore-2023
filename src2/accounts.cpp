@@ -146,11 +146,9 @@ void read(std::istringstream &stream, char tp, int su_pri) {
   using namespace Accounts;
   string s[10] = {"@", "@", "@", "@", "@"};
   int sz = 0;
-  while (sz<=4 && stream >> s[sz++])
+  while (sz<=5 && stream >> s[sz++])
     ;
   --sz;
-  // for(int i = 0; i < sz; ++i) std::cout<<s[i]<<" ";
-  // std::cout<<std::endl;
   switch (tp) {
   case 's': {
     // 保证@是合法 控制符

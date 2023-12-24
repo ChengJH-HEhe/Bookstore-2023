@@ -117,7 +117,6 @@ bool convert(const std::string &s) {
         dotpos = i;
     else if (!isdigit(s[i]))
       return false;
-  if(round(stod(s)*100)/100 < 1e-6) return false;
   return true;
 }
 
@@ -328,7 +327,7 @@ void delete_book(book a, int id) {
 void read(std::istringstream &stream, char c1, int pri) {
   string s[10] = {"@", "@", "@", "@", "@"};
   int sz = 0;
-  while (sz<=4 && stream >> s[sz++])
+  while (sz<=5 && stream >> s[sz++])
     ;
   --sz;
   switch (c1) {
@@ -405,7 +404,7 @@ void read(std::istringstream &stream, char c1, int pri) {
       double TotalCost = std::stod(s[1]);
       TotalCost = round(TotalCost * 100) / 100;
       int id = Accounts_system::stack::back().book;
-      if (!id || TotalCost < 1e-13)
+      if (!id || TotalCost < 1e-3)
         return invalid();
       books::book nw = books::find_book(id);
       nw.Quantity += num;

@@ -25,9 +25,8 @@ bool onlySpaces(const std::string &str) {
 void show(std::istringstream &stream,std::string s1, int pri) {
   std::string s[10];
   int sz = 0;
-  while(sz<=4 && stream>>s[sz++]);
+  while(sz <= 5 && stream>>s[sz++]);
   --sz;
-  if(!(sz <= 2)) return invalid();
   if (sz == 0) {
     Books_system::show(s1[1], "", pri);
   } else if (s[0] == "finance") {
