@@ -225,9 +225,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
                  s[2][0] - '0');
   } break;
   case 'd': {
-    std::string s1;
-    stream >> s1;
-    if(s1.size()) return invalid();
+    if(sz>1) return invalid();
     if (su_pri != 7 || !pd(s[0]))
       return invalid();
     int id = Find_id(s[0].c_str());
@@ -238,6 +236,7 @@ void read(std::istringstream &stream, char tp, int su_pri) {
     deleteUser(const_cast<char *>(s[0].c_str()), id);
   } break;
   case 'l': {
+    if(sz)return invalid();
     logout();
   } break;
   default: {

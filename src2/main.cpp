@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
   Log_system::Init();
   while (getline(cin, s)) {
     static int a = 0;
-    if(!onlySpaces(s)) invalid();
+    
     int pri = Accounts_system::get_pri();
     //std::cerr<<++a<<" ";
     //std::cerr<<pri<<std::endl;
