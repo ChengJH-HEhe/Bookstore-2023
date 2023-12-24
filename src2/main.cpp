@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
     }
     std::istringstream stream(s);
     std::string s1;
+    stream>>s1;
     //if(!(stream >> s1))continue;
     if (s1 == "quit" || s1 == "exit") {
       if (stream >> s1) {
