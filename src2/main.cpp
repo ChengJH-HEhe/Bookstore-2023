@@ -32,6 +32,7 @@ int main(int argc, char * argv[]) {
   while (getline(cin, s)) {
     static int a = 0;
     int pri = Accounts_system::get_pri();
+    if(!onlySpaces(s)) {invalid();continue;}
     //std::cerr<<++a<<" ";
     //std::cerr<<pri<<std::endl;
     // getpri
