@@ -121,7 +121,7 @@ R"(-ISBN=[^\x00-\x1F\s]{1,20}|-name="[^"\x00-\x1F\s]{1,60}"|-author="[^"\x00-\x1
 int main(int argc, char *argv[]) {
   clock_t start, end;
   start = clock(); // 开始时间
-   if(argc) freopen(argv[1],"r",stdin);
+  // if(argc) freopen(argv[1],"r",stdin);
   //  freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
@@ -149,10 +149,10 @@ int main(int argc, char *argv[]) {
       Accounts_system::read(stream, s1[0], pri);
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" ||
              s1 == "import") {
-      if (!check(s, s1)) {
-        invalid();
-        continue;
-      }
+      // if (!check(s, s1)) {
+      //   invalid();
+      //   continue;
+      // }
       Books_system::read(stream, s1[0], pri);
     } else if (s1 == "report") {
       if (pri != 7) {
