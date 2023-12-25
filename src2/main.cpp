@@ -149,10 +149,10 @@ int main(int argc, char *argv[]) {
       Accounts_system::read(stream, s1[0], pri);
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" ||
              s1 == "import") {
-      // if (!check(s, s1)) {
-      //   invalid();
-      //   continue;
-      // }
+      if (!check(s, s1)) {
+        invalid();
+        continue;
+      }
       Books_system::read(stream, s1[0], pri);
     } else if (s1 == "report") {
       if (pri != 7) {
@@ -166,6 +166,7 @@ int main(int argc, char *argv[]) {
       show(stream, s1, pri);
     } else {
       if (s == "log")
+      // '/' '3' '8' 
         Log_system::Log(stream, pri);
       else {
         invalid();
