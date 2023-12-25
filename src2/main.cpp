@@ -104,11 +104,13 @@ bool check(std::string a, std::string b) {
     std::istringstream str(a);
     std::string target;
     str >> target;
+    int sz = 0;
     while (str >> target) {
+      if(++sz > 5) return false;
       std::regex pattern(
-          R"(-ISBN=[^\s]{1,20}|-name="[^"\s]{1,60}"|-author="[^"\s]{1,60}"|-keyword="[^"\s]{1,60}"|-price=\d+(\.\d+))");
+R"(-ISBN=[^\x00-\x1F\s]{1,20}|-name="[^"\x00-\x1F\s]{1,60}"|-author="[^"\x00-\x1F\s]{1,60}"|-keyword="[^"\x00-\x1F\s]{1,60}"|-price=\d+(\.\d+))");
       if (std::regex_match(target, pattern))
-        return true;
+        return  std::cout<<target<<"\n",true;
       else
         return false;
     }
@@ -119,8 +121,8 @@ bool check(std::string a, std::string b) {
 int main(int argc, char *argv[]) {
   clock_t start, end;
   start = clock(); // 开始时间
-  // if(argc) freopen(argv[1],"r",stdin);
-  // freopen("test.out","w",stdout);
+   if(argc) freopen(argv[1],"r",stdin);
+   freopen("test.out","w",stdout);
   std::string s;
   Accounts_system::Init();
   Books_system::Init();
@@ -148,9 +150,9 @@ int main(int argc, char *argv[]) {
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" ||
              s1 == "import") {
       if (!check(s, s1)) {
-        invalid();
+        //invalid();
         continue;
-      }
+      }else continue;
       Books_system::read(stream, s1[0], pri);
     } else if (s1 == "report") {
       if (pri != 7) {
