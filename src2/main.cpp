@@ -150,9 +150,9 @@ int main(int argc, char *argv[]) {
     else if (s1 == "buy" || s1 == "select" || s1 == "modify" ||
              s1 == "import") {
       if (!check(s, s1)) {
-        //invalid();
+        invalid();
         continue;
-      }else continue;
+      }
       Books_system::read(stream, s1[0], pri);
     } else if (s1 == "report") {
       if (pri != 7) {
@@ -163,10 +163,6 @@ int main(int argc, char *argv[]) {
       stream >> s1;
       Log_system::read(s1, ss[0]);
     } else if (s1 == "show") {
-      if (!check(s, s1)) {
-        invalid();
-        continue;
-      }
       show(stream, s1, pri);
     } else {
       if (s == "log")
