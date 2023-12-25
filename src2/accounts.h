@@ -49,7 +49,6 @@ void Init();
 void select(int bookid);
 mystack back() ;
 } // namespace stack
-void end();
 int get_pri();
 
 void read(std::istringstream &, char, int);

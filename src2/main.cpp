@@ -110,7 +110,7 @@ bool check(std::string a, std::string b) {
       std::regex pattern(
 R"(-ISBN=[^\x00-\x1F\s]{1,20}|-name="[^"\x00-\x1F\s]{1,60}"|-author="[^"\x00-\x1F\s]{1,60}"|-keyword="[^"\x00-\x1F\s]{1,60}"|-price=\d+(\.\d+))");
       if (std::regex_match(target, pattern))
-        return  true;
+        return  std::cerr << target<<" ", true;
       else
         return false;
     }
